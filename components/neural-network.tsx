@@ -17,11 +17,11 @@ interface SectionDef {
 }
 
 const SECTIONS: SectionDef[] = [
-  { id: "about",      label: "About Me",   origin: [0,    0.4,   0],   color: "#c4b5fd", emissive: "#7c3aed", accentHex: "#8b5cf6", preview: ["Creative Technologist", "6+ years exp.", "Open to work"]    },
-  { id: "skills",     label: "Skills",     origin: [-3,   1.8,  -0.3], color: "#67e8f9", emissive: "#0891b2", accentHex: "#22d3ee", preview: ["React & Next.js", "Three.js / WebGL", "Node.js & Python"]  },
+  { id: "about",      label: "About Me",   origin: [0,    0.4,   0],   color: "#c4b5fd", emissive: "#7c3aed", accentHex: "#8b5cf6", preview: ["UBC Computer Science", "Minor in Commerce", "Building Tech × Business"]    },
+  { id: "skills",     label: "Skills",     origin: [-3,   1.8,  -0.3], color: "#67e8f9", emissive: "#0891b2", accentHex: "#22d3ee", preview: ["Java, Python & C++", "AWS, Docker & Kubernetes", "Distributed Systems & APIs"]  },
   { id: "experience", label: "Experience", origin: [2.8,  1.5,  -0.2], color: "#93c5fd", emissive: "#1d4ed8", accentHex: "#3b82f6", preview: ["3 companies", "6+ years", "Team lead"]                     },
   { id: "projects",   label: "Projects",   origin: [-2,  -1.4,   0.2], color: "#d8b4fe", emissive: "#7c3aed", accentHex: "#8b5cf6", preview: ["Neural Canvas", "SynthFlow", "DataGrid Pro"]                },
-  { id: "contact",    label: "Contact",    origin: [2.5, -1.6,  -0.1], color: "#f9a8d4", emissive: "#be185d", accentHex: "#ec4899", preview: ["hello@example.com", "github.com/alexchen", "linkedin.com"] },
+  { id: "contact",    label: "Contact",    origin: [2.5, -1.6,  -0.1], color: "#f9a8d4", emissive: "#be185d", accentHex: "#ec4899", preview: ["frankkaiwen.yu@gmail.com", "github.com/frankyu77", "linkedin.com/in/frankyu77"] },
 ]
 
 /* ─── Constants ─── */

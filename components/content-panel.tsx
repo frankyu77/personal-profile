@@ -213,10 +213,79 @@ function AboutContent() {
 
 function SkillsContent() {
   const accent = SECTION_ACCENT.skills.hex
+
   const skillCategories = [
-    { category: "Frontend",          skills: ["React", "Next.js", "TypeScript", "Three.js", "Tailwind CSS"] },
-    { category: "Backend",           skills: ["Node.js", "Python", "PostgreSQL", "Redis", "GraphQL"] },
-    { category: "Tools & Practices", skills: ["Git", "Docker", "CI/CD", "Agile", "Testing"] },
+    {
+      category: "Languages",
+      skills: [
+        "Java",
+        "Python",
+        "C++",
+        "C",
+        "C#",
+        "JavaScript",
+        "TypeScript",
+        "SQL",
+        "Kotlin"
+      ]
+    },
+    {
+      category: "Frameworks & Libraries",
+      skills: [
+        "React",
+        "Angular",
+        "Spring Boot",
+        "Express.js",
+        "Scikit-learn",
+        "PyTorch",
+        "Java Swing"
+      ]
+    },
+    {
+      category: "Cloud & DevOps",
+      skills: [
+        "AWS",
+        "Docker",
+        "Kubernetes",
+        "Jenkins",
+        "Gradle",
+        "Git",
+        "Linux",
+        "CI/CD"
+      ]
+    },
+    {
+      category: "Databases & APIs",
+      skills: [
+        "MySQL",
+        "Oracle",
+        "ArangoDB",
+        "Firebase",
+        "GraphQL",
+        "REST APIs"
+      ]
+    },
+    {
+      category: "Systems & Engineering",
+      skills: [
+        "Distributed Systems",
+        "System Design",
+        "Concurrency",
+        "Caching",
+        "Unit Testing",
+        "Integration Testing"
+      ]
+    },
+    {
+      category: "Data & Observability",
+      skills: [
+        "Machine Learning",
+        "Reinforcement Learning",
+        "Splunk",
+        "Monitoring",
+        "Logging Pipelines"
+      ]
+    }
   ]
 
   return (

@@ -417,9 +417,9 @@ function ProjectsContent() {
 function ContactContent() {
   const accent = SECTION_ACCENT.contact.hex
   const links = [
-    { href: "mailto:hello@example.com", icon: <Mail className="h-4 w-4" />, label: "Email",    sub: "hello@example.com" },
-    { href: "#",                         icon: <Github className="h-4 w-4" />, label: "GitHub",   sub: "github.com/alexchen" },
-    { href: "#",                         icon: <Linkedin className="h-4 w-4" />, label: "LinkedIn", sub: "linkedin.com/in/alexchen" },
+    { href: "mailto:frankkaiwen.yu@gmail.com", icon: <Mail className="h-4 w-4" />, label: "Email", sub: "frankkaiwen.yu@gmail.com" },
+    { href: "https://github.com/frankyu77", icon: <Github className="h-4 w-4" />, label: "GitHub", sub: "github.com/frankyu77" },
+    { href: "https://linkedin.com/in/frankyu77", icon: <Linkedin className="h-4 w-4" />, label: "LinkedIn", sub: "linkedin.com/in/frankyu77" },
   ]
 
   return (
@@ -530,7 +530,7 @@ export default function ContentPanel({ activeNode, onClose }: { activeNode: stri
           <div className="px-6 pb-4 flex-shrink-0">
             <div className="h-px mb-3" style={{ background: "rgba(255,255,255,0.05)" }} />
             <p className="text-xs font-mono text-center" style={{ color: "rgba(255,255,255,0.18)" }}>
-              Press <kbd className="px-1 py-0.5 rounded text-xs" style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)" }}>Esc</kbd> or click outside to return
+              Press <kbd className="px-1 py-0.5 rounded text-xs" style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)" }}>Esc</kbd> or click 'x' to return
             </p>
           </div>
         </div>

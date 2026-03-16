@@ -158,23 +158,44 @@ function AboutContent() {
       <div>
         <p className="text-xs font-mono tracking-[0.2em] uppercase mb-2" style={{ color: SECTION_ACCENT.about.hex }}>About Me</p>
         <h2 className="text-2xl md:text-3xl font-sans font-bold text-white leading-tight mb-3" style={{ letterSpacing: "-0.02em" }}>
-          Hello, I&apos;m Alex
+          Hello, I&apos;m Frank
         </h2>
-        <p className="text-sm text-white/40 font-mono">Full-Stack Developer & Creative Technologist</p>
+        <p className="text-sm text-white/40 font-mono">
+          Computer Science @ UBC • Minor in Commerce
+        </p>
       </div>
+
       <div className="h-px" style={{ background: `linear-gradient(90deg, ${SECTION_ACCENT.about.hex}40, transparent)` }} />
+
       <p className="text-sm text-white/55 leading-relaxed">
-        I build accessible, pixel-perfect digital experiences for the web. My favorite work lives at the intersection of
-        design and engineering — where things look great <em>and</em> perform flawlessly.
+        I&apos;m a third-year Computer Science student at the University of British Columbia, minoring in Commerce. 
+        I enjoy building software that doesn&apos;t just work, but also solves meaningful problems and creates real value 
+        for the people who use it.
       </p>
+
       <p className="text-sm text-white/55 leading-relaxed">
-        Passionate about emerging tech and immersive interfaces, this portfolio is a reflection of that philosophy
-        — a living neural network you can explore.
+        My interests lies at the intersection of technology and business. I&apos;m fascinated by how great products 
+        are created, where strong engineering meets thoughtful product thinking. Whether I&apos;m designing systems, 
+        building applications, or experimenting with new ideas, I focus on creating tools that are scalable, 
+        intuitive, and impactful.
       </p>
+
+      <p className="text-sm text-white/55 leading-relaxed">
+        I&apos;m especially drawn to fast-moving environments where ambitious ideas turn into products used by millions. 
+        Long term, I want to build technology that shapes industries, the kind of software that quietly powers how 
+        people work, connect, and create.
+      </p>
+
+      <p className="text-sm text-white/55 leading-relaxed">
+        This website is a reflection of the ideas, projects, and experiments I&apos;ve worked on 
+        while exploring the intersection of technology and business. Feel free to explore 
+        the projects and experiences that have shaped my journey so far, and thanks for stopping by 😈.
+      </p>
+
       <div className="flex gap-3 pt-1">
         {[
-          { href: "#", icon: <Github className="h-4 w-4" />, label: "GitHub" },
-          { href: "#", icon: <Linkedin className="h-4 w-4" />, label: "LinkedIn" },
+          { href: "https://github.com/frankyu77", icon: <Github className="h-4 w-4" />, label: "GitHub" },
+          { href: "https://linkedin.com/in/frankyu77", icon: <Linkedin className="h-4 w-4" />, label: "LinkedIn" },
         ].map(({ href, icon, label }) => (
           <a key={label} href={href}
             className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-mono transition-all duration-200"

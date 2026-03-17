@@ -452,8 +452,8 @@ function ProjectsContent() {
       {/* ── Orbital system ── */}
       <div className="relative flex items-center justify-center select-none" style={{ height: "300px", overflow: "visible" }}>
         {/* Ring outlines */}
-        <div className="absolute pointer-events-none" style={{ width: "276px", height: "172px", border: `1px solid ${accent}14`, borderRadius: "50%" }} />
-        <div className="absolute pointer-events-none" style={{ width: "144px", height: "90px",  border: `1px solid ${accent}0c`, borderRadius: "50%" }} />
+        <div className="absolute pointer-events-none" style={{ width: "276px", height: "172px", border: `1px solid ${accent}60`, borderRadius: "50%", boxShadow: `0 0 12px ${accent}18, inset 0 0 12px ${accent}08` }} />
+        <div className="absolute pointer-events-none" style={{ width: "144px", height: "90px",  border: `1px solid ${accent}42`, borderRadius: "50%", boxShadow: `0 0 8px ${accent}12`  }} />
 
         {/* Central hub */}
         <div className="absolute z-10 flex items-center justify-center"

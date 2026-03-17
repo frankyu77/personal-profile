@@ -320,19 +320,28 @@ function ExperienceContent() {
   const accent = SECTION_ACCENT.experience.hex
   const experiences = [
     {
-      role: "Senior Frontend Engineer", company: "NeuralTech Inc.", period: "2023 — Present",
-      description: "Build and maintain critical UI components powering the AI dashboard. Lead a team of 4 on accessibility initiatives.",
-      tech: ["React", "TypeScript", "Three.js", "WebGL"],
+      role: "Software Developer Intern", 
+      company: "Pason Systems — Build & Infrastructure Team", 
+      period: "Jan 2024 — Present",
+      description:
+        "Designed and scaled CI/CD infrastructure by migrating pipelines to auto-scaling AWS EC2 Docker runners using Terraform, improving build performance and reliability. Developed custom Gradle plugins for dependency governance, license compliance, and CI policy enforcement, adopted across 20+ repositories. Optimized build pipelines and caching strategies, reducing execution time and improving developer velocity across teams.",
+      tech: ["Java", "Gradle", "AWS", "Docker", "Terraform", "CI/CD"],
     },
     {
-      role: "Full-Stack Developer", company: "DataFlow Systems", period: "2021 — 2023",
-      description: "Developed real-time data visualization tools and API infrastructure serving 100K+ daily users.",
-      tech: ["Next.js", "Node.js", "PostgreSQL", "D3.js"],
+      role: "Software Developer Intern", 
+      company: "Pason Systems — Tier 3 / Systems Engineering Team", 
+      period: "May 2024 - Dec 2024",
+      description:
+        "Built Python automation and diagnostic tooling for 300+ distributed Linux workstations, reducing provisioning and troubleshooting time by 50% and improving field reliability. Engineered and optimized Splunk pipelines processing 10K+ daily logs and metrics, enabling faster root cause analysis and reducing incident resolution time by 30%. Investigated production issues using complex SQL queries and system-level debugging across distributed environments.",
+      tech: ["Python", "Linux", "Splunk", "SQL", "Systems Debugging"],
     },
     {
-      role: "Frontend Developer", company: "CreativeStudio", period: "2019 — 2021",
-      description: "Crafted interactive web experiences and marketing sites for enterprise clients across industries.",
-      tech: ["React", "GSAP", "Sass", "WordPress"],
+      role: "Teaching Assistant — CPSC 304", 
+      company: "University of British Columbia", 
+      period: "Jan 2025 — Apr 2025",
+      description:
+        "Taught database systems concepts including schema design, SQL, and scalable architectures to 30+ students. Mentored 500+ students building cloud-ready applications, with focus on performance tuning, query optimization, and API-to-database integration.",
+      tech: ["SQL", "MySQL", "Oracle", "Database Design"],
     },
   ]
 

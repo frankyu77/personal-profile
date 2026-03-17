@@ -86,71 +86,6 @@ function MiniPlexus({ color, isVisible }: { color: string; isVisible: boolean })
   return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: 0.35 }} />
 }
 
-/* ─── Project card ─── */
-function ProjectCard({ name, description, tech, github, demo, accent }: {
-  name: string; description: string; tech: string[]
-  github?: string; demo?: string; accent: string
-}) {
-  return (
-    <div
-      className="group relative flex flex-col gap-3 p-5 rounded-xl transition-all duration-300"
-      style={{
-        background: "rgba(255,255,255,0.03)",
-        border: "1px solid rgba(255,255,255,0.07)",
-      }}
-      onMouseEnter={e => {
-        const el = e.currentTarget as HTMLElement
-        el.style.borderColor = `${accent}40`
-        el.style.boxShadow = `0 0 20px ${accent}10`
-        el.style.background = "rgba(255,255,255,0.05)"
-      }}
-      onMouseLeave={e => {
-        const el = e.currentTarget as HTMLElement
-        el.style.borderColor = "rgba(255,255,255,0.07)"
-        el.style.boxShadow = "none"
-        el.style.background = "rgba(255,255,255,0.03)"
-      }}
-    >
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center h-7 w-7 rounded-md" style={{ background: `${accent}18` }}>
-            <Code2 className="h-3.5 w-3.5" style={{ color: accent }} />
-          </div>
-          <h3 className="text-sm font-sans font-semibold text-white">{name}</h3>
-        </div>
-        <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-          {github && (
-            <a href={github} target="_blank" rel="noopener noreferrer"
-              className="flex items-center justify-center h-6 w-6 rounded-md text-white/50 hover:text-white transition-colors"
-              style={{ background: "rgba(255,255,255,0.06)" }}
-              aria-label="GitHub"
-            >
-              <Github className="h-3 w-3" />
-            </a>
-          )}
-          {demo && (
-            <a href={demo} target="_blank" rel="noopener noreferrer"
-              className="flex items-center justify-center h-6 w-6 rounded-md text-white/50 hover:text-white transition-colors"
-              style={{ background: "rgba(255,255,255,0.06)" }}
-              aria-label="Live demo"
-            >
-              <ExternalLink className="h-3 w-3" />
-            </a>
-          )}
-        </div>
-      </div>
-      <p className="text-xs text-white/45 leading-relaxed">{description}</p>
-      <div className="flex flex-wrap gap-1.5 pt-0.5">
-        {tech.map(t => (
-          <span key={t} className="px-2 py-0.5 text-xs font-mono rounded-md" style={{ background: `${accent}15`, color: accent, border: `1px solid ${accent}25` }}>
-            {t}
-          </span>
-        ))}
-      </div>
-    </div>
-  )
-}
-
 /* ─── Section content components ─── */
 function AboutContent() {
   return (
@@ -378,33 +313,133 @@ function ExperienceContent() {
   )
 }
 
+const PROJECTS = [
+  {
+    name: "UBC Insight",
+    shortDescription: "SQL-like query engine over 10,000+ course records",
+    description: "Full-stack academic data query engine built on UBC's course and room datasets. Implements a custom SQL-like query language parser with support for complex filtering, grouping, and sorting. Features a REST API backend with persistent data management and a dynamic frontend for real-time query results.",
+    tech: ["TypeScript", "Node.js", "REST API", "Mocha"],
+    github: "https://github.com/frankyu77/UBC-Insight",
+    icon: "🎓",
+  },
+  {
+    name: "Nova",
+    shortDescription: "Top-down 2D pixel art game in C — no engine",
+    description: "Feature-complete top-down 2D pixel art adventure game written in C. Implements a custom game loop, sprite rendering pipeline, tile-based collision detection, and entity state machines from scratch, no game engine. Manages a 232MB asset pipeline including sprite sheets, tilemaps, and audio.",
+    tech: ["C", "SDL2", "Game Physics", "Pixel Art"],
+    github: "https://github.com/frankyu77/Nova",
+    icon: "🎮",
+  },
+  {
+    name: "Maze Pathfinder",
+    shortDescription: "Visual comparison of BFS, DFS, Dijkstra's, and A*",
+    description: "Interactive visualizer for classic graph traversal algorithms including BFS, DFS, Dijkstra's, and A*. Built in C++ with real-time animated rendering, allowing side-by-side comparison of algorithm efficiency across procedurally generated mazes.",
+    tech: ["C++", "Algorithms", "Graph Theory"],
+    github: "https://github.com/frankyu77/Maze_Pathfinder",
+    icon: "🧩",
+  },
+  {
+    name: "Gemini Hackathon",
+    shortDescription: "Android + Gemini AI app shipped under hackathon time",
+    description: "Android application built at a competitive hackathon integrating Google's Gemini AI API. Designed and shipped a working Kotlin app under time constraints, demonstrating rapid prototyping ability and applied LLM integration with on-device mobile UX.",
+    tech: ["Kotlin", "Android", "Gemini API", "Jetpack Compose"],
+    github: "https://github.com/frankyu77/geminihackathon",
+    icon: "🤖",
+  },
+  {
+    name: "Pokémon Tracker",
+    shortDescription: "Full PokéAPI web app with team builder and stat viewer",
+    description: "Full-featured web app consuming the PokéAPI to browse, search, and track Pokémon across all generations. Implements client-side filtering, dynamic rendering of stats and type matchups, and persistent team-building state.",
+    tech: ["JavaScript", "REST API", "HTML/CSS"],
+    github: "https://github.com/frankyu77/Pokemon-Tracker",
+    icon: "⚡",
+  },
+  {
+    name: "Tetris",
+    shortDescription: "Tetris clone with SRS rotation and custom renderer in C#",
+    description: "Full clone of Tetris built in C# with a custom rendering engine, piece rotation logic using the Super Rotation System (SRS), progressive difficulty scaling, and a high-score system. Clean separation between game logic, state, and rendering layers.",
+    tech: ["C#", "OOP", "Game Logic"],
+    github: "https://github.com/frankyu77/Tetris",
+    icon: "🟦",
+  },
+  {
+    name: "Blackjack",
+    shortDescription: "Blackjack engine with splits, doubles, and dealer AI",
+    description: "Console-based Blackjack engine in Java implementing the full ruleset including splits, doubles, and dealer AI. Architected with clean OOP principles with separated deck, hand, player, and game controller classes.",
+    tech: ["Java", "OOP", "Design Patterns"],
+    github: "https://github.com/frankyu77/Blackjack",
+    icon: "🃏",
+  },
+  {
+    name: "Personal Profile",
+    shortDescription: "This interactive 3D neural network portfolio site",
+    description: "This portfolio site is a modern, animated developer profile built with TypeScript and React Three Fiber. Features an interactive 3D neural network, glassmorphism panels, particle trails, and a starfield with mouse parallax.",
+    tech: ["TypeScript", "React", "Three.js", "Tailwind"],
+    github: "https://github.com/frankyu77/personal-profile",
+    icon: "🌐",
+  },
+]
+
+// Ring layout: outer 5 nodes, inner 3 nodes
+const ORBIT_LAYOUT = PROJECTS.map((_, i) => {
+  if (i < 5) {
+    return { rx: 138, ry: 86, startAngle: (i / 5) * Math.PI * 2 - Math.PI / 2, duration: 34, dir: 1  }
+  }
+  const j = i - 5
+  return   { rx: 72,  ry: 45, startAngle: (j / 3) * Math.PI * 2 - Math.PI / 2 + Math.PI / 3, duration: 22, dir: -1 }
+})
+
 function ProjectsContent() {
-  const accent = SECTION_ACCENT.projects.hex
-  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null)
+  const accent   = SECTION_ACCENT.projects.hex
+  const accentRg = SECTION_ACCENT.projects.rgb
 
-  const projects = [
-    {
-      name: "Neural Canvas",
-      description: "Interactive 3D data visualization platform mapping complex datasets into navigable neural landscapes.",
-      tech: ["Three.js", "React", "WebGL"],
-      github: "#", demo: "#", icon: "🧠",
-    },
-    {
-      name: "SynthFlow",
-      description: "Real-time audio synthesis tool built with Web Audio API and custom DSP algorithms.",
-      tech: ["TypeScript", "Web Audio", "Canvas"],
-      github: "#", icon: "🎵",
-    },
-    {
-      name: "DataGrid Pro",
-      description: "High-performance table component handling 1M+ rows with virtual scrolling and custom renderers.",
-      tech: ["React", "TypeScript", "WASM"],
-      github: "#", demo: "#", icon: "📊",
-    },
-  ]
+  const [focusedIdx,  setFocusedIdx]  = useState<number | null>(null)
+  const [activeIdx,   setActiveIdx]   = useState<number | null>(null)
+  const [cardVisible, setCardVisible] = useState(false)   // drives enter animation
 
-  const animNames = ["orbit-a", "orbit-b", "orbit-c"]
-  const durations = [13, 16, 11]
+  const nodeRefs  = useRef<(HTMLDivElement | null)[]>([])
+  const pausedRef = useRef(false)
+  const rafRef    = useRef(0)
+
+  // Card enter animation — small delay so CSS transition fires after mount
+  useEffect(() => {
+    if (activeIdx !== null) {
+      const t = setTimeout(() => setCardVisible(true), 16)
+      return () => clearTimeout(t)
+    } else {
+      setCardVisible(false)
+    }
+  }, [activeIdx])
+
+  // RAF orbit — direct DOM writes only, zero React re-renders per frame
+  useEffect(() => {
+    let acc = 0, last = performance.now()
+    const tick = (now: number) => {
+      if (!pausedRef.current) acc += now - last
+      last = now
+      nodeRefs.current.forEach((el, i) => {
+        if (!el) return
+        const { rx, ry, startAngle, duration, dir } = ORBIT_LAYOUT[i]
+        const theta = startAngle + (acc / 1000) * (Math.PI * 2 / duration) * dir
+        el.style.transform = `translate(calc(-50% + ${Math.cos(theta) * rx}px), calc(-50% + ${Math.sin(theta) * ry}px))`
+      })
+      rafRef.current = requestAnimationFrame(tick)
+    }
+    rafRef.current = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(rafRef.current)
+  }, [])
+
+  const handleHover   = (i: number) => { setFocusedIdx(i); pausedRef.current = true }
+  const handleUnhover = ()           => { setFocusedIdx(null); if (activeIdx === null) pausedRef.current = false }
+  const handleClick   = (i: number) => {
+    const next = activeIdx === i ? null : i
+    setActiveIdx(next)
+    setFocusedIdx(null)
+    pausedRef.current = next !== null
+  }
+  const handleClose = () => { setActiveIdx(null); pausedRef.current = false }
+
+  const proj = activeIdx !== null ? PROJECTS[activeIdx] : focusedIdx !== null ? PROJECTS[focusedIdx] : null
 
   return (
     <div className="flex flex-col gap-5">
@@ -415,78 +450,227 @@ function ProjectsContent() {
       <div className="h-px" style={{ background: `linear-gradient(90deg, ${accent}40, transparent)` }} />
 
       {/* ── Orbital system ── */}
-      <div className="relative flex items-center justify-center select-none" style={{ height: "280px" }}>
-        {/* Orbit ring */}
-        <div
-          className="absolute pointer-events-none"
-          style={{ width: "260px", height: "160px", border: `1px solid ${accent}18`, borderRadius: "50%" }}
-        />
+      <div className="relative flex items-center justify-center select-none" style={{ height: "300px", overflow: "visible" }}>
+        {/* Ring outlines */}
+        <div className="absolute pointer-events-none" style={{ width: "276px", height: "172px", border: `1px solid ${accent}14`, borderRadius: "50%" }} />
+        <div className="absolute pointer-events-none" style={{ width: "144px", height: "90px",  border: `1px solid ${accent}0c`, borderRadius: "50%" }} />
 
-        {/* Center hub */}
-        <div
-          className="absolute z-10 flex flex-col items-center justify-center"
-          style={{ width: "56px", height: "56px", borderRadius: "50%", background: `${accent}10`, border: `1px solid ${accent}28`, boxShadow: `0 0 18px ${accent}12` }}
-        >
-          <span style={{ fontSize: "8px", fontFamily: "monospace", color: accent, letterSpacing: "0.1em", textTransform: "uppercase" }}>work</span>
+        {/* Central hub */}
+        <div className="absolute z-10 flex items-center justify-center"
+          style={{ width: "44px", height: "44px", borderRadius: "50%", background: `${accent}0e`, border: `1px solid ${accent}30`, boxShadow: `0 0 18px ${accent}18` }}>
+          <Code2 style={{ width: "14px", height: "14px", color: accent, opacity: 0.65 }} />
         </div>
 
-        {/* Orbiting project cards */}
-        {projects.map((proj, i) => (
-          <div
-            key={proj.name}
-            className="absolute"
-            style={{
-              top: "50%",
-              left: "50%",
-              animation: `${animNames[i]} ${durations[i]}s linear infinite`,
-              animationPlayState: hoveredIdx === i ? "paused" : "running",
-            }}
-            onMouseEnter={() => setHoveredIdx(i)}
-            onMouseLeave={() => setHoveredIdx(null)}
-          >
+        {/* Orbit nodes */}
+        {PROJECTS.map((p, i) => {
+          const isFocused = focusedIdx === i
+          const isActive  = activeIdx  === i
+          const isDimmed  = (focusedIdx !== null && !isFocused) || (activeIdx !== null && !isActive)
+          const isLit     = isFocused || isActive
+          return (
             <div
-              style={{
-                transform: "translate(-50%, -50%)",
-                width: "130px",
-                background: hoveredIdx === i ? `${accent}16` : "rgba(255,255,255,0.04)",
-                border: `1px solid ${hoveredIdx === i ? accent + "40" : "rgba(255,255,255,0.08)"}`,
-                borderRadius: "10px",
-                padding: "8px 10px",
-                boxShadow: hoveredIdx === i ? `0 0 20px ${accent}18` : "none",
-                transition: "background 0.2s, border-color 0.2s, box-shadow 0.2s",
-                cursor: "default",
-              }}
+              key={p.name}
+              ref={el => { nodeRefs.current[i] = el }}
+              className="absolute"
+              style={{ top: "50%", left: "50%", zIndex: isLit ? 15 : 5 }}
+              onMouseEnter={() => handleHover(i)}
+              onMouseLeave={handleUnhover}
+              onClick={() => handleClick(i)}
             >
-              <div className="flex items-center gap-1.5 mb-1">
-                <span style={{ fontSize: "13px" }}>{proj.icon}</span>
-                <span style={{ fontSize: "11px", fontFamily: "sans-serif", fontWeight: 600, color: "rgba(255,255,255,0.9)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{proj.name}</span>
+              {/*
+                Outer div: only has position (RAF updates its transform).
+                Inner div: handles scale + opacity (React state).
+              */}
+              <div style={{
+                transform: `translate(-50%, -50%) scale(${isLit ? 1.15 : 1})`,
+                opacity: isDimmed ? 0.18 : 1,
+                transition: "opacity 0.28s ease, transform 0.22s cubic-bezier(0.16,1,0.3,1)",
+                cursor: "pointer",
+                position: "relative",
+              }}>
+                {/* Ambient glow — separate element so it doesn't affect layout */}
+                <div style={{
+                  position: "absolute", inset: "-12px", borderRadius: "50%", pointerEvents: "none",
+                  background: isLit ? `radial-gradient(circle, ${accent}18 0%, transparent 70%)` : "none",
+                  boxShadow: isLit ? `0 0 20px ${accent}45` : `0 0 6px ${accent}14`,
+                  transition: "box-shadow 0.28s ease, background 0.28s ease",
+                }} />
+
+                {/* Node circle */}
+                <div style={{
+                  width: "44px", height: "44px", borderRadius: "50%",
+                  background: isLit
+                    ? `radial-gradient(circle at 38% 38%, ${accent}30, ${accent}12)`
+                    : `radial-gradient(circle at 38% 38%, ${accent}14, ${accent}08)`,
+                  border: `1.5px solid ${isLit ? accent + "65" : accent + "25"}`,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  transition: "background 0.28s ease, border-color 0.28s ease",
+                }}>
+                  {/*
+                    Fixed 20×20 bounding box so every emoji occupies the same space.
+                    fontSize slightly below box height so tall glyphs don't clip.
+                  */}
+                  <span style={{
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    width: "20px", height: "20px",
+                    fontSize: "13px", lineHeight: "20px",
+                    marginTop: "1px",   /* optical correction for emoji baseline */
+                  }}>
+                    {p.icon}
+                  </span>
+                </div>
+
+                {/* Label — hidden by default, fades in on hover/active */}
+                <div style={{
+                  position: "absolute", top: "100%", left: "50%", transform: "translateX(-50%)",
+                  marginTop: "7px", whiteSpace: "nowrap", pointerEvents: "none",
+                  fontSize: "9px", fontFamily: "monospace", letterSpacing: "0.08em",
+                  color: "rgba(255,255,255,0.88)",
+                  opacity: isLit ? 1 : 0,
+                  transition: "opacity 0.2s ease",
+                }}>
+                  {p.name}
+                </div>
               </div>
-              {hoveredIdx === i && (
-                <>
-                  <p style={{ fontSize: "10px", color: "rgba(255,255,255,0.42)", lineHeight: 1.5, marginBottom: "6px" }}>{proj.description}</p>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", marginBottom: "6px" }}>
-                    {proj.tech.slice(0, 2).map(t => (
-                      <span key={t} style={{ fontSize: "9px", fontFamily: "monospace", padding: "1px 6px", borderRadius: "4px", background: `${accent}15`, color: accent, border: `1px solid ${accent}25` }}>{t}</span>
-                    ))}
+            </div>
+          )
+        })}
+      </div>
+
+      {/* ── Info / Detail panel ── */}
+      <div style={{ minHeight: "72px" }}>
+
+        {/* ── Expanded project card ── */}
+        {activeIdx !== null && proj && (
+          <div style={{
+            position: "relative", overflow: "hidden",
+            borderRadius: "18px",
+            background: `linear-gradient(145deg, rgba(18,12,36,0.98), rgba(10,7,22,0.98))`,
+            border: `1px solid rgba(${accentRg}, 0.28)`,
+            boxShadow: `0 0 48px rgba(${accentRg}, 0.08), 0 16px 48px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04)`,
+            opacity:    cardVisible ? 1 : 0,
+            transform:  cardVisible ? "translateY(0) scale(1)" : "translateY(6px) scale(0.97)",
+            transition: "opacity 0.28s cubic-bezier(0.16,1,0.3,1), transform 0.28s cubic-bezier(0.16,1,0.3,1)",
+          }}>
+            {/* Top accent line */}
+            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: `linear-gradient(90deg, transparent 0%, ${accent} 50%, transparent 100%)`, opacity: 0.7 }} />
+            {/* Ambient radial glow */}
+            <div style={{ position: "absolute", top: "-60px", left: "50%", transform: "translateX(-50%)", width: "280px", height: "180px", borderRadius: "50%", background: `radial-gradient(ellipse, rgba(${accentRg},0.07) 0%, transparent 70%)`, pointerEvents: "none" }} />
+
+            <div style={{ padding: "22px 22px 20px" }}>
+              {/* Header row */}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "14px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                  {/* Project icon — same fixed bounding box as orbit node */}
+                  <div style={{
+                    width: "40px", height: "40px", borderRadius: "12px", flexShrink: 0,
+                    background: `radial-gradient(circle at 38% 38%, ${accent}28, ${accent}10)`,
+                    border: `1px solid ${accent}35`,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                  }}>
+                    <span style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "20px", height: "20px", fontSize: "14px", lineHeight: "20px", marginTop: "1px" }}>
+                      {proj.icon}
+                    </span>
                   </div>
-                  <div style={{ display: "flex", gap: "8px" }}>
-                    {proj.github && <a href={proj.github} style={{ fontSize: "10px", fontFamily: "monospace", color: "rgba(255,255,255,0.35)" }}>gh ↗</a>}
-                    {proj.demo   && <a href={proj.demo}   style={{ fontSize: "10px", fontFamily: "monospace", color: accent }}>demo ↗</a>}
+                  <div>
+                    <h3 style={{ margin: 0, fontSize: "18px", fontFamily: "var(--font-space, sans-serif)", fontWeight: 700, color: "white", letterSpacing: "-0.02em", lineHeight: 1.1 }}>
+                      {proj.name}
+                    </h3>
+                    <p style={{ margin: "3px 0 0", fontSize: "10px", fontFamily: "monospace", color: `rgba(${accentRg}, 0.6)`, letterSpacing: "0.08em" }}>
+                      {proj.shortDescription}
+                    </p>
                   </div>
-                </>
+                </div>
+                <button
+                  onClick={handleClose}
+                  style={{
+                    flexShrink: 0, width: "26px", height: "26px", borderRadius: "8px",
+                    background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)",
+                    color: "rgba(255,255,255,0.4)", cursor: "pointer",
+                    display: "flex", alignItems: "center", justifyContent: "center", fontSize: "15px",
+                    transition: "background 0.15s, color 0.15s",
+                  }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.1)"; (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.8)" }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.05)"; (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.4)" }}
+                >×</button>
+              </div>
+
+              {/* Divider */}
+              <div style={{ height: "1px", background: `linear-gradient(90deg, rgba(${accentRg},0.2), transparent)`, marginBottom: "14px" }} />
+
+              {/* Description */}
+              <p style={{ margin: "0 0 16px", fontSize: "12px", color: "rgba(255,255,255,0.48)", lineHeight: 1.75 }}>
+                {proj.description}
+              </p>
+
+              {/* Tech tags — full pill */}
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginBottom: "18px" }}>
+                {proj.tech.map(t => (
+                  <span key={t} style={{
+                    fontSize: "9px", fontFamily: "monospace", letterSpacing: "0.05em",
+                    padding: "4px 10px", borderRadius: "100px",
+                    background: `rgba(${accentRg}, 0.09)`,
+                    color: `rgba(${accentRg}, 0.9)`,
+                    border: `1px solid rgba(${accentRg}, 0.22)`,
+                    boxShadow: `0 0 6px rgba(${accentRg}, 0.06)`,
+                  }}>{t}</span>
+                ))}
+              </div>
+
+              {/* CTA */}
+              {proj.github && (
+                <a
+                  href={proj.github} target="_blank" rel="noopener noreferrer"
+                  style={{
+                    display: "inline-flex", alignItems: "center", gap: "7px",
+                    fontSize: "11px", fontFamily: "monospace", letterSpacing: "0.04em",
+                    color: "rgba(255,255,255,0.75)",
+                    background: `rgba(${accentRg}, 0.10)`,
+                    border: `1px solid rgba(${accentRg}, 0.30)`,
+                    padding: "9px 16px", borderRadius: "10px",
+                    textDecoration: "none",
+                    transition: "background 0.2s, border-color 0.2s, color 0.2s",
+                  }}
+                  onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.background = `rgba(${accentRg}, 0.18)`; el.style.borderColor = `rgba(${accentRg}, 0.55)`; el.style.color = "white" }}
+                  onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.background = `rgba(${accentRg}, 0.10)`; el.style.borderColor = `rgba(${accentRg}, 0.30)`; el.style.color = "rgba(255,255,255,0.75)" }}
+                >
+                  <ExternalLink style={{ width: "11px", height: "11px", flexShrink: 0 }} />
+                  View on GitHub
+                </a>
               )}
             </div>
           </div>
-        ))}
+        )}
 
-        <p style={{ position: "absolute", bottom: "0", left: "50%", transform: "translateX(-50%)", fontSize: "9px", fontFamily: "monospace", color: "rgba(255,255,255,0.18)", letterSpacing: "0.15em", whiteSpace: "nowrap" }}>
-          HOVER TO PAUSE · CLICK TO EXPLORE
-        </p>
-      </div>
+        {/* ── Hover preview bar ── */}
+        {activeIdx === null && focusedIdx !== null && proj && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px", paddingLeft: "4px" }}>
+            {/* Left accent + name row */}
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <div style={{ width: "2px", height: "28px", borderRadius: "2px", background: `linear-gradient(to bottom, ${accent}, ${accent}44)`, flexShrink: 0 }} />
+              <div>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <span style={{ fontSize: "14px", fontFamily: "sans-serif", fontWeight: 600, color: "white", letterSpacing: "-0.01em" }}>{proj.name}</span>
+                  <span style={{ fontSize: "9px", fontFamily: "monospace", color: "rgba(255,255,255,0.25)", letterSpacing: "0.1em" }}>CLICK TO EXPAND</span>
+                </div>
+                <p style={{ margin: "2px 0 0", fontSize: "11px", color: "rgba(255,255,255,0.42)", lineHeight: 1.4 }}>{proj.shortDescription}</p>
+              </div>
+            </div>
+            {/* Tags */}
+            <div style={{ display: "flex", gap: "5px", paddingLeft: "12px" }}>
+              {proj.tech.slice(0, 3).map(t => (
+                <span key={t} style={{ fontSize: "9px", fontFamily: "monospace", padding: "3px 9px", borderRadius: "100px", background: `rgba(${accentRg}, 0.09)`, color: `rgba(${accentRg}, 0.85)`, border: `1px solid rgba(${accentRg}, 0.20)` }}>{t}</span>
+              ))}
+            </div>
+          </div>
+        )}
 
-      {/* ── Full project cards ── */}
-      <div className="flex flex-col gap-3">
-        {projects.map(p => <ProjectCard key={p.name} accent={accent} {...p} />)}
+        {/* ── Default hint ── */}
+        {activeIdx === null && focusedIdx === null && (
+          <p style={{ textAlign: "center", paddingTop: "22px", fontSize: "9px", fontFamily: "monospace", color: "rgba(255,255,255,0.16)", letterSpacing: "0.18em" }}>
+            HOVER TO PREVIEW · CLICK TO EXPAND
+          </p>
+        )}
       </div>
     </div>
   )

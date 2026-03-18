@@ -55,7 +55,7 @@ export default function Home() {
       <header className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-6 py-5 md:px-10">
         {/* Logo / wordmark */}
         <span className="anim-fade-up text-xs font-mono font-medium tracking-[0.25em] uppercase text-white/35 select-none">
-          Alex Chen
+          Frank Yu
         </span>
 
         {/* Nav pill */}
@@ -124,7 +124,7 @@ export default function Home() {
               textShadow: "0 0 80px rgba(139,92,246,0.3)",
             }}
           >
-            Alex Chen
+            Frank Yu
           </h1>
 
           {/* Title */}
@@ -136,7 +136,7 @@ export default function Home() {
               letterSpacing: "0.08em",
             }}
           >
-            Full-Stack Developer &amp; Creative Technologist
+            Software Developer &amp; Creative Technologist
           </p>
 
           {/* Tagline */}

@@ -84,26 +84,3 @@
 .anim-delay-3 { animation-delay: 0.50s; }
 .anim-delay-4 { animation-delay: 0.70s; }
 
-/* ─── Project orbit animations ─── */
-/* Elliptical orbit: Rx=130px, Ry=80px, 3 cards at 0°/120°/240° phase */
-@keyframes orbit-a {
-  0%   { transform: translate(130px,  0px);   }
-  25%  { transform: translate(0px,    80px);  }
-  50%  { transform: translate(-130px, 0px);   }
-  75%  { transform: translate(0px,    -80px); }
-  100% { transform: translate(130px,  0px);   }
-}
-@keyframes orbit-b {
-  0%   { transform: translate(-65px,  69px);  }
-  25%  { transform: translate(-113px, -40px); }
-  50%  { transform: translate(65px,   -69px); }
-  75%  { transform: translate(113px,  40px);  }
-  100% { transform: translate(-65px,  69px);  }
-}
-@keyframes orbit-c {
-  0%   { transform: translate(-65px, -69px); }
-  25%  { transform: translate(113px, -40px); }
-  50%  { transform: translate(65px,   69px); }
-  75%  { transform: translate(-113px, 40px); }
-  100% { transform: translate(-65px, -69px); }
-}

@@ -10,7 +10,7 @@ const NAV_ITEMS = [
   { id: "skills",     label: "Skills" },
   { id: "projects",   label: "Projects" },
   { id: "experience", label: "Experience" },
-  { id: "contact",    label: "Contact" },
+  { id: "about",      label: "About Me" },
 ]
 
 export default function Home() {

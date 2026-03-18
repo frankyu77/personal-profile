@@ -3,6 +3,7 @@
 import { useRef, useEffect, useCallback, useState } from "react"
 import { X, Github, Linkedin, Mail, ExternalLink, Code2 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import ProfileImage from "@/components/profile-image"
 
 /* ─── Section accent palette ─── */
 const SECTION_ACCENT: Record<string, { hex: string; rgb: string }> = {
@@ -88,60 +89,236 @@ function MiniPlexus({ color, isVisible }: { color: string; isVisible: boolean })
 }
 
 /* ─── Section content components ─── */
+
+const FOCUS_AREAS = [
+  "Scalable backend systems",
+  "Developer tooling & infrastructure",
+  "Data pipelines & performance",
+  "Full-stack applications",
+]
+
+const QUICK_FACTS = [
+  { label: "Location",  value: "Calgary, AB"           },
+  { label: "School",    value: "UBC"                   },
+  { label: "Degree",    value: "CS + Commerce"         },
+  { label: "Interests", value: "Systems · infra · product" },
+  { label: "Status",    value: "Open to opportunities", highlight: true },
+]
+
 function AboutContent() {
+  const accent    = SECTION_ACCENT.about.hex
+  const accentRgb = SECTION_ACCENT.about.rgb
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    const t = setTimeout(() => setMounted(true), 60)
+    return () => clearTimeout(t)
+  }, [])
+
   return (
-    <div className="flex flex-col gap-5">
-      <div>
-        <p className="text-xs font-mono tracking-[0.2em] uppercase mb-2" style={{ color: SECTION_ACCENT.about.hex }}>About Me</p>
-        <h2 className="text-2xl md:text-3xl font-sans font-bold text-white leading-tight mb-3" style={{ letterSpacing: "-0.02em" }}>
-          Hello, I&apos;m Frank
-        </h2>
-        <p className="text-sm text-white/40 font-mono">
-          Computer Science @ UBC • Minor in Commerce
+    <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+
+      {/* ── Eyebrow ── */}
+      <div style={{
+        opacity:    mounted ? 1 : 0,
+        transform:  mounted ? "translateY(0)" : "translateY(8px)",
+        transition: "opacity 0.45s ease 0.04s, transform 0.45s cubic-bezier(0.16,1,0.3,1) 0.04s",
+      }}>
+        <p style={{ margin: 0, fontSize: "9.5px", fontFamily: "monospace", letterSpacing: "0.22em", textTransform: "uppercase", color: accent, marginBottom: "3px" }}>
+          About / Profile
+        </p>
+        <p style={{ margin: 0, fontSize: "10px", fontFamily: "monospace", color: "rgba(255,255,255,0.22)", letterSpacing: "0.04em" }}>
+          A quick overview of who I am and what I build
         </p>
       </div>
 
-      <div className="h-px" style={{ background: `linear-gradient(90deg, ${SECTION_ACCENT.about.hex}40, transparent)` }} />
+      <div style={{ height: "1px", background: `linear-gradient(90deg, ${accent}40, transparent)` }} />
 
-      <p className="text-sm text-white/55 leading-relaxed">
-        I&apos;m a third-year Computer Science student at the University of British Columbia, minoring in Commerce. 
-        I enjoy building software that doesn&apos;t just work, but also solves meaningful problems and creates real value 
-        for the people who use it.
-      </p>
+      {/* ── 2-column body ── */}
+      <div style={{ display: "flex", gap: "28px", alignItems: "flex-start", flexWrap: "wrap" }}>
 
-      <p className="text-sm text-white/55 leading-relaxed">
-        My interests lies at the intersection of technology and business. I&apos;m fascinated by how great products 
-        are created, where strong engineering meets thoughtful product thinking. Whether I&apos;m designing systems, 
-        building applications, or experimenting with new ideas, I focus on creating tools that are scalable, 
-        intuitive, and impactful.
-      </p>
+        {/* ── LEFT: text ── */}
+        <div style={{ flex: "1 1 240px", display: "flex", flexDirection: "column", gap: "16px", minWidth: 0 }}>
 
-      <p className="text-sm text-white/55 leading-relaxed">
-        I&apos;m especially drawn to fast-moving environments where ambitious ideas turn into products used by millions. 
-        Long term, I want to build technology that shapes industries, the kind of software that quietly powers how 
-        people work, connect, and create.
-      </p>
+          {/* Headline block */}
+          <div style={{
+            opacity:    mounted ? 1 : 0,
+            transform:  mounted ? "translateY(0)" : "translateY(10px)",
+            transition: "opacity 0.45s ease 0.10s, transform 0.45s cubic-bezier(0.16,1,0.3,1) 0.10s",
+          }}>
+            {/* Name + inline AVAILABLE badge */}
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap", marginBottom: "5px" }}>
+              <h2 style={{ margin: 0, fontSize: "22px", fontFamily: "sans-serif", fontWeight: 700, color: "white", letterSpacing: "-0.02em", lineHeight: 1.2 }}>
+                Hello, I&apos;m Frank
+              </h2>
+              <span style={{
+                display:       "inline-flex",
+                alignItems:    "center",
+                gap:           "5px",
+                padding:       "3px 9px 3px 7px",
+                borderRadius:  "100px",
+                background:    `rgba(${accentRgb},0.12)`,
+                border:        `1px solid rgba(${accentRgb},0.28)`,
+                fontSize:      "7.5px",
+                fontFamily:    "monospace",
+                letterSpacing: "0.13em",
+                color:         "rgba(167,139,250,0.85)",
+                flexShrink:    0,
+              }}>
+                <span style={{
+                  width: "5px", height: "5px", borderRadius: "50%",
+                  background: accent, boxShadow: `0 0 6px ${accent}`,
+                  display: "inline-block", flexShrink: 0,
+                  animation: "pulse 2s cubic-bezier(0.4,0,0.6,1) infinite",
+                }} />
+                AVAILABLE
+              </span>
+            </div>
+            <p style={{ margin: 0, fontSize: "11px", fontFamily: "monospace", color: `rgba(${accentRgb},0.70)`, letterSpacing: "0.01em" }}>
+              CS @ UBC · Building scalable systems &amp; developer tools
+            </p>
+          </div>
 
-      <p className="text-sm text-white/55 leading-relaxed">
-        This website is a reflection of the ideas, projects, and experiments I&apos;ve worked on 
-        while exploring the intersection of technology and business. Feel free to explore 
-        the projects and experiences that have shaped my journey so far, and thanks for stopping by 😈.
-      </p>
+          {/* Short intro */}
+          <p style={{
+            margin: 0, fontSize: "12.5px", color: "rgba(255,255,255,0.52)", lineHeight: 1.72, fontFamily: "sans-serif",
+            opacity:    mounted ? 1 : 0,
+            transform:  mounted ? "translateY(0)" : "translateY(10px)",
+            transition: "opacity 0.45s ease 0.18s, transform 0.45s cubic-bezier(0.16,1,0.3,1) 0.18s",
+          }}>
+            I&apos;m a software developer focused on <strong style={{ color: "rgba(255,255,255,0.80)", fontWeight: 600 }}>scalable systems</strong>,{" "}
+            <strong style={{ color: "rgba(255,255,255,0.80)", fontWeight: 600 }}>developer tooling</strong>, and data-driven applications.
+            I thrive at the intersection of engineering and product — turning complex problems into clean, reliable solutions.
+          </p>
 
-      <div className="flex gap-3 pt-1">
-        {[
-          { href: "https://github.com/frankyu77", icon: <Github className="h-4 w-4" />, label: "GitHub" },
-          { href: "https://linkedin.com/in/frankyu77", icon: <Linkedin className="h-4 w-4" />, label: "LinkedIn" },
-        ].map(({ href, icon, label }) => (
-          <a key={label} href={href}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-mono transition-all duration-200"
-            style={{ background: `${SECTION_ACCENT.about.hex}15`, color: SECTION_ACCENT.about.hex, border: `1px solid ${SECTION_ACCENT.about.hex}25` }}
-            onMouseEnter={e => (e.currentTarget.style.background = `${SECTION_ACCENT.about.hex}25`)}
-            onMouseLeave={e => (e.currentTarget.style.background = `${SECTION_ACCENT.about.hex}15`)}
-          >
-            {icon}{label}
-          </a>
-        ))}
+          {/* Focus areas */}
+          <div style={{
+            opacity:    mounted ? 1 : 0,
+            transition: "opacity 0.4s ease 0.24s",
+          }}>
+            <p style={{ margin: "0 0 8px", fontSize: "9px", fontFamily: "monospace", letterSpacing: "0.18em", textTransform: "uppercase", color: `rgba(${accentRgb},0.55)` }}>
+              What I Work On
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              {FOCUS_AREAS.map((area, i) => (
+                <div key={i} style={{
+                  display:    "flex",
+                  gap:        "9px",
+                  alignItems: "center",
+                  opacity:    mounted ? 1 : 0,
+                  transform:  mounted ? "translateX(0)" : "translateX(-10px)",
+                  transition: `opacity 0.38s ease ${0.28 + i * 0.07}s, transform 0.38s cubic-bezier(0.16,1,0.3,1) ${0.28 + i * 0.07}s`,
+                }}>
+                  <div style={{ width: "4px", height: "4px", borderRadius: "1px", background: accent, flexShrink: 0, opacity: 0.7 }} />
+                  <span style={{ fontSize: "11.5px", fontFamily: "monospace", color: "rgba(255,255,255,0.50)", letterSpacing: "0.01em" }}>
+                    {area}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Impact statement */}
+          <p style={{
+            margin: 0, fontSize: "11.5px", color: "rgba(255,255,255,0.36)", lineHeight: 1.72, fontFamily: "sans-serif", fontStyle: "italic",
+            borderLeft: `2px solid ${accent}30`,
+            paddingLeft: "12px",
+            opacity:    mounted ? 1 : 0,
+            transition: "opacity 0.4s ease 0.58s",
+          }}>
+            Especially drawn to fast-paced environments where ambitious ideas turn into products
+            used at scale. Long term, I want to build the software that quietly powers how
+            people work, collaborate, and decide.
+          </p>
+
+          {/* CTA row */}
+          <div style={{
+            display: "flex", gap: "8px", flexWrap: "wrap",
+            opacity:    mounted ? 1 : 0,
+            transform:  mounted ? "translateY(0)" : "translateY(6px)",
+            transition: "opacity 0.4s ease 0.64s, transform 0.4s ease 0.64s",
+          }}>
+            {[
+              { href: "https://github.com/frankyu77",       icon: <Github   className="h-3.5 w-3.5" />, label: "GitHub"   },
+              { href: "https://linkedin.com/in/frankyu77", icon: <Linkedin className="h-3.5 w-3.5" />, label: "LinkedIn" },
+            ].map(({ href, icon, label }) => (
+              <a key={label} href={href} target="_blank" rel="noopener noreferrer"
+                style={{
+                  display: "flex", alignItems: "center", gap: "6px",
+                  padding: "7px 14px", borderRadius: "8px",
+                  fontSize: "11px", fontFamily: "monospace",
+                  background: `rgba(${accentRgb},0.10)`,
+                  color: `rgba(${accentRgb},0.85)`,
+                  border: `1px solid rgba(${accentRgb},0.22)`,
+                  textDecoration: "none",
+                  transition: "background 0.18s ease, border-color 0.18s ease",
+                }}
+                onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.background = `rgba(${accentRgb},0.20)`; el.style.borderColor = `rgba(${accentRgb},0.40)` }}
+                onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.background = `rgba(${accentRgb},0.10)`; el.style.borderColor = `rgba(${accentRgb},0.22)` }}
+              >
+                {icon}{label}
+              </a>
+            ))}
+          </div>
+
+        </div>
+
+        {/* ── RIGHT: image + quick facts ── */}
+        <div style={{
+          flexShrink: 0,
+          display:    "flex",
+          flexDirection: "column",
+          gap:        "12px",
+          alignItems: "stretch",
+          width:      "clamp(180px, 22vw, 230px)",
+          opacity:    mounted ? 1 : 0,
+          transform:  mounted ? "translateY(0)" : "translateY(12px)",
+          transition: "opacity 0.5s ease 0.12s, transform 0.5s cubic-bezier(0.16,1,0.3,1) 0.12s",
+        }}>
+
+          <ProfileImage />
+
+          {/* ── Quick Facts card ── */}
+          <div style={{
+            borderRadius:   "14px",
+            padding:        "13px 14px",
+            background:     "rgba(255,255,255,0.03)",
+            border:         `1px solid rgba(${accentRgb},0.15)`,
+            backdropFilter: "blur(12px)",
+            boxShadow:      `0 4px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.04)`,
+            display:        "flex",
+            flexDirection:  "column",
+            gap:            "9px",
+          }}>
+            <p style={{ margin: 0, fontSize: "8px", fontFamily: "monospace", letterSpacing: "0.18em", textTransform: "uppercase", color: `rgba(${accentRgb},0.45)`, marginBottom: "2px" }}>
+              Quick Facts
+            </p>
+            {QUICK_FACTS.map((fact, i) => (
+              <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "8px" }}>
+                <span style={{ fontSize: "8.5px", fontFamily: "monospace", color: "rgba(255,255,255,0.28)", letterSpacing: "0.06em", flexShrink: 0, paddingTop: "1px" }}>
+                  {fact.label}
+                </span>
+                <span style={{
+                  fontSize:      "8.5px",
+                  fontFamily:    "monospace",
+                  letterSpacing: "0.02em",
+                  textAlign:     "right",
+                  color:         fact.highlight ? accent : "rgba(255,255,255,0.58)",
+                  display:       "flex",
+                  alignItems:    "center",
+                  gap:           "4px",
+                }}>
+                  {fact.highlight && (
+                    <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: accent, boxShadow: `0 0 6px ${accent}`, display: "inline-block", flexShrink: 0 }} />
+                  )}
+                  {fact.value}
+                </span>
+              </div>
+            ))}
+          </div>
+
+        </div>
+
       </div>
     </div>
   )
@@ -1264,7 +1441,8 @@ export default function ContentPanel({ activeNode, onClose }: { activeNode: stri
       <div className="relative h-full flex items-center justify-center p-4 md:p-10">
         <div
           className={cn(
-            "relative w-full max-w-xl max-h-[88vh] flex flex-col rounded-2xl overflow-hidden transition-all duration-500",
+            "relative w-full max-h-[88vh] flex flex-col rounded-2xl overflow-hidden transition-all duration-500",
+            activeNode === "about" ? "max-w-2xl" : "max-w-xl",
             activeNode ? "scale-100 translate-y-0" : "scale-95 translate-y-6"
           )}
           style={{

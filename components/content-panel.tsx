@@ -288,8 +288,8 @@ function ExperienceContent() {
       </div>
       <div className="h-px" style={{ background: `linear-gradient(90deg, ${accent}40, transparent)` }} />
       <div className="flex flex-col gap-3">
-        {experiences.map((exp) => (
-          <div key={exp.role}
+        {experiences.map((exp, i) => (
+          <div key={`${exp.role}-${i}`}
             className="flex flex-col gap-2 p-4 rounded-xl transition-all duration-200"
             style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}
             onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.borderColor = `${accent}35`; el.style.background = "rgba(255,255,255,0.05)" }}

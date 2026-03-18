@@ -457,72 +457,199 @@ function DotCloud({ ambientNodes }: { ambientNodes: PhysicsNode[] }) {
   )
 }
 
-/* ─── Section sphere with label + tooltip ─── */
-interface AnimState { scale: number; haloScale: number; haloOpacity: number; coreOpacity: number }
+/* ─── Node visual styles per section ─── */
+interface NodeStyle {
+  ring1R: number; ring1T: number; ring1Segs: number
+  ring2R: number; ring2T: number; ring2Segs: number
+  ring1Speed: number; ring2Speed: number; orbitN: number
+}
+
+const NODE_STYLES: NodeStyle[] = [
+  { ring1R: 0.20, ring1T: 0.008, ring1Segs: 64, ring2R: 0.27, ring2T: 0.004, ring2Segs: 48, ring1Speed:  0.005, ring2Speed:  0.003, orbitN: 2 }, // About
+  { ring1R: 0.19, ring1T: 0.006, ring1Segs: 64, ring2R: 0.29, ring2T: 0.003, ring2Segs: 32, ring1Speed:  0.008, ring2Speed: -0.004, orbitN: 2 }, // Skills
+  { ring1R: 0.19, ring1T: 0.011, ring1Segs: 48, ring2R: 0.26, ring2T: 0.007, ring2Segs: 24, ring1Speed:  0.003, ring2Speed:  0.002, orbitN: 2 }, // Experience
+  { ring1R: 0.20, ring1T: 0.012, ring1Segs: 6,  ring2R: 0.28, ring2T: 0.010, ring2Segs: 6,  ring1Speed:  0.012, ring2Speed: -0.007, orbitN: 3 }, // Projects
+  { ring1R: 0.20, ring1T: 0.007, ring1Segs: 64, ring2R: 0.27, ring2T: 0.004, ring2Segs: 64, ring1Speed:  0.009, ring2Speed:  0.006, orbitN: 3 }, // Contact
+]
+
+/* ─── Section node — multi-layer energy core ─── */
+interface NodeAnimState { scale: number; clickTime: number }
 
 function SectionSphere({
-  section, physics, isActive, isHovered, anyNodeActive, onHover, onUnhover, onClick,
+  section, physics, isActive, isHovered, anyNodeActive, styleIdx, onHover, onUnhover, onClick,
 }: {
   section: SectionDef; physics: PhysicsNode; isActive: boolean; isHovered: boolean
-  anyNodeActive: boolean; onHover: () => void; onUnhover: () => void; onClick: () => void
+  anyNodeActive: boolean; styleIdx: number
+  onHover: () => void; onUnhover: () => void; onClick: () => void
 }) {
+  const style = NODE_STYLES[styleIdx]
+
   const groupRef     = useRef<THREE.Group>(null)
   const labelRef     = useRef<THREE.Group>(null)
   const tooltipRef   = useRef<THREE.Group>(null)
-  const haloRef      = useRef<THREE.Mesh>(null)
   const coreRef      = useRef<THREE.Mesh>(null)
-  const highlightRef = useRef<THREE.Mesh>(null)
-  const anim = useRef<AnimState>({ scale: 1, haloScale: 2.0, haloOpacity: 0.05, coreOpacity: 0.72 })
+  const innerGlowRef = useRef<THREE.Mesh>(null)
+  const outerHaloRef = useRef<THREE.Mesh>(null)
+  const ring1Ref     = useRef<THREE.Mesh>(null)
+  const ring2Ref     = useRef<THREE.Mesh>(null)
+  const rippleRef    = useRef<THREE.Mesh>(null)
+  const orbitGeomRef = useRef<THREE.BufferGeometry>(null)
+  const orbitMatRef  = useRef<THREE.PointsMaterial>(null)
 
-  useFrame(() => {
+  const anim         = useRef<NodeAnimState>({ scale: 1, clickTime: -999 })
+  const clickPending = useRef(false)
+
+  const { orbitN } = style
+  const orbitPositions = useMemo(() => new Float32Array(orbitN * 3), [orbitN])
+
+  useFrame((state) => {
     if (!groupRef.current) return
-    const a   = anim.current
-    const spd = 0.1
+    const t = state.clock.getElapsedTime()
+    const a = anim.current
 
-    const tScale       = isActive ? 1.35 : isHovered ? 1.18 : 1.0
-    const tHaloScale   = isActive ? 3.0  : isHovered ? 2.4  : 1.7
-    const tHaloOpacity = isActive ? 0.22 : isHovered ? 0.14 : 0.05
-    const tCoreOpacity = isActive ? 1.0  : isHovered ? 0.92 : 0.72
+    if (clickPending.current) { a.clickTime = t; clickPending.current = false }
 
-    a.scale       += (tScale       - a.scale)       * spd
-    a.haloScale   += (tHaloScale   - a.haloScale)   * spd
-    a.haloOpacity += (tHaloOpacity - a.haloOpacity) * spd
-    a.coreOpacity += (tCoreOpacity - a.coreOpacity) * spd
-
+    // Position all groups
     groupRef.current.position.copy(physics.pos)
+    if (rippleRef.current)  rippleRef.current.position.copy(physics.pos)
+    if (labelRef.current)   labelRef.current.position.set(physics.pos.x, physics.pos.y - 0.42, physics.pos.z)
+    if (tooltipRef.current) tooltipRef.current.position.set(physics.pos.x, physics.pos.y + 0.56, physics.pos.z)
+
+    // Breathing scale + hover/active
+    const breathe = 1 + Math.sin(t * 1.3 + section.id.charCodeAt(0) * 0.5) * 0.03
+    const tScale  = anyNodeActive && !isActive ? 0.82 : isActive ? 1.38 : isHovered ? 1.18 : breathe
+    a.scale      += (tScale - a.scale) * 0.08
     groupRef.current.scale.setScalar(a.scale)
 
-    if (labelRef.current)   labelRef.current.position.set(physics.pos.x, physics.pos.y - 0.32, physics.pos.z)
-    if (tooltipRef.current) tooltipRef.current.position.set(physics.pos.x, physics.pos.y + 0.52, physics.pos.z)
+    // Core sphere
+    if (coreRef.current) {
+      const mat = coreRef.current.material as THREE.MeshBasicMaterial
+      const tOp = anyNodeActive && !isActive ? 0.25 : isActive ? 1.0 : isHovered ? 0.95 : 0.82
+      mat.opacity += (tOp - mat.opacity) * 0.10
+    }
+    // Inner glow sphere
+    if (innerGlowRef.current) {
+      const mat = innerGlowRef.current.material as THREE.MeshBasicMaterial
+      const tOp = anyNodeActive && !isActive ? 0.06 : isActive ? 0.55 : isHovered ? 0.40 : 0.20
+      mat.opacity += (tOp - mat.opacity) * 0.08
+    }
+    // Outer halo sphere
+    if (outerHaloRef.current) {
+      const mat = outerHaloRef.current.material as THREE.MeshBasicMaterial
+      const tOp = anyNodeActive && !isActive ? 0.02 : isActive ? 0.22 : isHovered ? 0.14 : 0.06
+      mat.opacity += (tOp - mat.opacity) * 0.06
+    }
 
-    if (haloRef.current)      { haloRef.current.scale.setScalar(a.haloScale); (haloRef.current.material as THREE.MeshBasicMaterial).opacity = a.haloOpacity }
-    if (coreRef.current)      { (coreRef.current.material as THREE.MeshBasicMaterial).opacity = a.coreOpacity }
-    if (highlightRef.current) { (highlightRef.current.material as THREE.MeshBasicMaterial).opacity = a.coreOpacity * 0.35 }
+    // Ring 1 — tilted, continuously spinning around Z
+    if (ring1Ref.current) {
+      const spd = isHovered ? style.ring1Speed * 2.8 : style.ring1Speed
+      ring1Ref.current.rotation.x  = Math.PI / 3
+      ring1Ref.current.rotation.z += spd
+      const mat = ring1Ref.current.material as THREE.MeshBasicMaterial
+      const tOp = anyNodeActive && !isActive ? 0.05 : isActive ? 0.88 : isHovered ? 0.72 : 0.36
+      mat.opacity += (tOp - mat.opacity) * 0.08
+    }
+    // Ring 2 — counter-tilted, spinning around Y
+    if (ring2Ref.current) {
+      const spd = isHovered ? style.ring2Speed * 2.8 : style.ring2Speed
+      ring2Ref.current.rotation.x  = Math.PI / 6
+      ring2Ref.current.rotation.y += spd
+      const mat = ring2Ref.current.material as THREE.MeshBasicMaterial
+      const tOp = anyNodeActive && !isActive ? 0.03 : isActive ? 0.52 : isHovered ? 0.40 : 0.16
+      mat.opacity += (tOp - mat.opacity) * 0.08
+    }
+
+    // Click ripple — expands outward then fades
+    if (rippleRef.current) {
+      const mat = rippleRef.current.material as THREE.MeshBasicMaterial
+      if (a.clickTime > 0) {
+        const elapsed = t - a.clickTime
+        if (elapsed < 0.75) {
+          const p = elapsed / 0.75
+          rippleRef.current.scale.setScalar(1 + p * 7)
+          mat.opacity = (1 - p) * 0.55
+        } else {
+          mat.opacity  = 0
+          a.clickTime = -999
+        }
+      }
+    }
+
+    // Orbiting particles — 3-D elliptical orbits at different tilts
+    const ORBIT_R = 0.24
+    for (let i = 0; i < orbitN; i++) {
+      const phase = (i / orbitN) * Math.PI * 2
+      const tilt  = (i / orbitN) * Math.PI
+      const spd   = (isHovered ? 1.4 : 0.7) * (0.6 + i * 0.25)
+      const angle = t * spd + phase
+      orbitPositions[i * 3]     = Math.cos(angle) * ORBIT_R
+      orbitPositions[i * 3 + 1] = Math.sin(angle) * Math.cos(tilt) * ORBIT_R
+      orbitPositions[i * 3 + 2] = Math.sin(angle) * Math.sin(tilt) * ORBIT_R
+    }
+    if (orbitGeomRef.current) orbitGeomRef.current.attributes.position.needsUpdate = true
+    if (orbitMatRef.current) {
+      const tOp = anyNodeActive && !isActive ? 0.08 : isActive ? 0.80 : isHovered ? 0.95 : 0.50
+      orbitMatRef.current.opacity += (tOp - orbitMatRef.current.opacity) * 0.08
+    }
   })
 
   const showLabel = !anyNodeActive
 
   return (
     <>
+      {/* ── Scaled visual group ── */}
       <group ref={groupRef}>
-        <mesh ref={haloRef} renderOrder={1000}>
-          <sphereGeometry args={[0.13, 32, 32]} />
-          <meshBasicMaterial color={section.emissive} transparent opacity={0.05} depthWrite={false} depthTest={false} blending={THREE.AdditiveBlending} />
+
+        {/* Layer 1: outer halo */}
+        <mesh ref={outerHaloRef} renderOrder={999}>
+          <sphereGeometry args={[0.30, 16, 16]} />
+          <meshBasicMaterial color={section.emissive} transparent opacity={0.06} depthWrite={false} depthTest={false} blending={THREE.AdditiveBlending} />
         </mesh>
+
+        {/* Layer 2: inner glow */}
+        <mesh ref={innerGlowRef} renderOrder={1000}>
+          <sphereGeometry args={[0.14, 16, 16]} />
+          <meshBasicMaterial color={section.color} transparent opacity={0.20} depthWrite={false} depthTest={false} blending={THREE.AdditiveBlending} />
+        </mesh>
+
+        {/* Layer 3: solid core — hit target */}
         <mesh ref={coreRef} renderOrder={1001}
           onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = "pointer"; onHover()   }}
           onPointerOut={(e)  => { e.stopPropagation(); document.body.style.cursor = "auto";    onUnhover() }}
-          onClick={(e)       => { e.stopPropagation(); onClick() }}
+          onClick={(e)       => { e.stopPropagation(); clickPending.current = true; onClick()             }}
         >
-          <sphereGeometry args={[0.13, 64, 64]} />
-          <meshBasicMaterial color={section.emissive} transparent opacity={0.72} depthWrite={false} depthTest={false} blending={THREE.AdditiveBlending} />
+          <sphereGeometry args={[0.08, 32, 32]} />
+          <meshBasicMaterial color={section.color} transparent opacity={0.82} depthWrite={false} depthTest={false} blending={THREE.AdditiveBlending} />
         </mesh>
-        <mesh ref={highlightRef} renderOrder={1002}>
-          <sphereGeometry args={[0.055, 32, 32]} />
-          <meshBasicMaterial color={section.color} transparent opacity={0.28} depthWrite={false} depthTest={false} blending={THREE.AdditiveBlending} />
+
+        {/* Layer 4a: primary ring — tilted, spinning */}
+        <mesh ref={ring1Ref} renderOrder={1002}>
+          <torusGeometry args={[style.ring1R, style.ring1T, 8, style.ring1Segs]} />
+          <meshBasicMaterial color={section.color} transparent opacity={0.36} depthWrite={false} depthTest={false} blending={THREE.AdditiveBlending} />
         </mesh>
+
+        {/* Layer 4b: secondary ring — counter-tilted, counter-spinning */}
+        <mesh ref={ring2Ref} renderOrder={1002}>
+          <torusGeometry args={[style.ring2R, style.ring2T, 8, style.ring2Segs]} />
+          <meshBasicMaterial color={section.emissive} transparent opacity={0.16} depthWrite={false} depthTest={false} blending={THREE.AdditiveBlending} />
+        </mesh>
+
+        {/* Layer 5: orbiting particles */}
+        <points renderOrder={1003}>
+          <bufferGeometry ref={orbitGeomRef}>
+            <bufferAttribute attach="attributes-position" args={[orbitPositions, 3]} />
+          </bufferGeometry>
+          <pointsMaterial ref={orbitMatRef} size={0.030} color={section.color} transparent opacity={0.50} sizeAttenuation depthWrite={false} depthTest={false} blending={THREE.AdditiveBlending} />
+        </points>
       </group>
 
+      {/* ── Click ripple (world-space, outside scaled group) ── */}
+      <mesh ref={rippleRef} renderOrder={1004}>
+        <ringGeometry args={[0.10, 0.155, 48]} />
+        <meshBasicMaterial color={section.color} transparent opacity={0} side={THREE.DoubleSide} depthWrite={false} depthTest={false} blending={THREE.AdditiveBlending} />
+      </mesh>
+
+      {/* ── Node label ── */}
       {showLabel && (
         <group ref={labelRef}>
           <Html center distanceFactor={6} style={{ pointerEvents: "none", userSelect: "none" }} zIndexRange={[5, 0]}>
@@ -533,6 +660,7 @@ function SectionSphere({
         </group>
       )}
 
+      {/* ── Hover tooltip ── */}
       <group ref={tooltipRef}>
         <Html center distanceFactor={5} style={{ pointerEvents: "none", userSelect: "none" }} zIndexRange={[10, 0]}>
           <div style={{ opacity: isHovered && !anyNodeActive ? 1 : 0, transform: isHovered && !anyNodeActive ? "translateY(0px)" : "translateY(6px)", transition: "opacity 0.2s ease, transform 0.2s ease", background: "rgba(5,8,22,0.92)", backdropFilter: "blur(16px)", border: `1px solid ${section.accentHex}45`, borderRadius: "10px", padding: "10px 13px", minWidth: "130px", boxShadow: `0 0 30px ${section.accentHex}18, 0 8px 32px rgba(0,0,0,0.5)` }}>
@@ -688,6 +816,7 @@ export default function NeuralNetwork({ activeNode, onNodeClick }: { activeNode:
           isActive={activeNode === section.id}
           isHovered={hoveredNode === section.id}
           anyNodeActive={activeNode !== null}
+          styleIdx={i}
           onHover={() => setHoveredNode(section.id)}
           onUnhover={() => setHoveredNode(null)}
           onClick={() => handleClick(section.id)}

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback, useEffect } from "react"
+import { useState, useCallback, useEffect, useRef } from "react"
 import dynamic from "next/dynamic"
 import ContentPanel from "@/components/content-panel"
 
@@ -28,8 +28,34 @@ export default function Home() {
     return () => window.removeEventListener("keydown", handleKeyDown)
   }, [])
 
+  const cursorRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const move = (e: MouseEvent) => {
+      if (cursorRef.current) {
+        cursorRef.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`
+      }
+    }
+    window.addEventListener("mousemove", move, { passive: true })
+    return () => window.removeEventListener("mousemove", move)
+  }, [])
+
   return (
     <main className="relative h-screen w-full overflow-hidden" style={{ background: "#050816" }}>
+
+      {/* Cursor glow */}
+      <div
+        ref={cursorRef}
+        className="pointer-events-none fixed"
+        style={{
+          top: "-140px", left: "-140px",
+          zIndex: 8,
+          width: "280px", height: "280px",
+          borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(139,92,246,0.07) 0%, transparent 65%)",
+          transition: "transform 0.12s ease-out",
+          willChange: "transform",
+        }}
+      />
 
       {/* 3D Canvas */}
       <div className="absolute inset-0">
@@ -215,7 +241,7 @@ export default function Home() {
       </div>
 
       {/* Content panel */}
-      <ContentPanel activeNode={activeNode} onClose={() => setActiveNode(null)} />
+      <ContentPanel activeNode={activeNode} onClose={() => setActiveNode(null)} onNavigate={setActiveNode} />
     </main>
   )
 }

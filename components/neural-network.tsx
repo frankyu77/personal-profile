@@ -318,10 +318,12 @@ function PlexusEdges({
   ambientNodes,
   sectionPhysics,
   hoveredNode,
+  activeNode,
 }: {
   ambientNodes: PhysicsNode[]
   sectionPhysics: PhysicsNode[]
   hoveredNode: string | null
+  activeNode: string | null
 }) {
   const MAX_EDGES = 4000
   const posArr  = useMemo(() => new Float32Array(MAX_EDGES * 6), [])
@@ -337,6 +339,12 @@ function PlexusEdges({
     if (hoveredNode) {
       const idx = SECTIONS.findIndex(s => s.id === hoveredNode)
       if (idx >= 0) hoverPos = sectionPhysics[idx].pos
+    }
+
+    let activePos: THREE.Vector3 | null = null
+    if (activeNode) {
+      const idx = SECTIONS.findIndex(s => s.id === activeNode)
+      if (idx >= 0) activePos = sectionPhysics[idx].pos
     }
 
     let ei = 0
@@ -359,6 +367,14 @@ function PlexusEdges({
             const mz = (allPos[i].z + allPos[j].z) / 2
             const dh = Math.sqrt((mx - hoverPos.x) ** 2 + (my - hoverPos.y) ** 2 + (mz - hoverPos.z) ** 2)
             if (dh < 1.6) boost = 1 + (1 - dh / 1.6) * 1.4
+          }
+
+          if (activePos) {
+            const mx = (allPos[i].x + allPos[j].x) / 2
+            const my = (allPos[i].y + allPos[j].y) / 2
+            const mz = (allPos[i].z + allPos[j].z) / 2
+            const dh = Math.sqrt((mx - activePos.x) ** 2 + (my - activePos.y) ** 2 + (mz - activePos.z) ** 2)
+            if (dh < 2.0) boost = Math.max(boost, 1 + (1 - dh / 2.0) * 2.4)
           }
 
           const alpha = Math.min(fade * 0.58 * boost * pulse, 1.0 / 0.75)
@@ -807,7 +823,7 @@ export default function NeuralNetwork({ activeNode, onNodeClick }: { activeNode:
       <ParticleTrails ambientNodes={ambientNodes} />
       <SkillConstellation skillPhysics={skillsPhysics} isSkillHovered={hoveredNode === "skills"} anyNodeActive={activeNode !== null} />
 
-      <PlexusEdges ambientNodes={ambientNodes} sectionPhysics={sectionPhysics} hoveredNode={hoveredNode} />
+      <PlexusEdges ambientNodes={ambientNodes} sectionPhysics={sectionPhysics} hoveredNode={hoveredNode} activeNode={activeNode} />
       <PlexusFaces ambientNodes={ambientNodes} sectionPhysics={sectionPhysics} />
       <DotCloud    ambientNodes={ambientNodes} />
 

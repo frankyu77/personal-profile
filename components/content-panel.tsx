@@ -15,6 +15,15 @@ const SECTION_ACCENT: Record<string, { hex: string; rgb: string }> = {
   life:       { hex: "#f59e0b", rgb: "245,158,11"  },
 }
 
+const SECTION_NAV = [
+  { id: "about",      label: "About",      color: "#8b5cf6" },
+  { id: "skills",     label: "Skills",     color: "#22d3ee" },
+  { id: "experience", label: "Experience", color: "#3b82f6" },
+  { id: "projects",   label: "Projects",   color: "#8b5cf6" },
+  { id: "contact",    label: "Contact",    color: "#ec4899" },
+  { id: "life",       label: "Life",       color: "#f59e0b" },
+]
+
 /* ─── Mini plexus canvas background ─── */
 function MiniPlexus({ color, isVisible }: { color: string; isVisible: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -324,107 +333,133 @@ function AboutContent() {
   )
 }
 
+const CAPABILITY_CLUSTERS = [
+  {
+    id: "backend",
+    label: "Backend & Languages",
+    color: "#3b82f6",
+    rgb: "59,130,246",
+    skills: ["Java", "Python", "C++", "C", "C#", "Kotlin", "Spring Boot", "Express.js", "GraphQL", "REST APIs"],
+  },
+  {
+    id: "infra",
+    label: "Infrastructure & DevOps",
+    color: "#22d3ee",
+    rgb: "34,211,238",
+    skills: ["AWS", "Docker", "Kubernetes", "Terraform", "CI/CD", "Linux", "Jenkins", "Git", "Gradle"],
+  },
+  {
+    id: "data",
+    label: "Data & Systems",
+    color: "#8b5cf6",
+    rgb: "139,92,246",
+    skills: ["MySQL", "Oracle", "ArangoDB", "Firebase", "Splunk", "Distributed Systems", "System Design", "Concurrency", "Caching", "Machine Learning"],
+  },
+  {
+    id: "frontend",
+    label: "Frontend & Tools",
+    color: "#f59e0b",
+    rgb: "245,158,11",
+    skills: ["TypeScript", "JavaScript", "React", "Angular", "SQL", "PyTorch", "Scikit-learn", "Unit Testing", "Integration Testing"],
+  },
+]
+
 function SkillsContent() {
   const accent = SECTION_ACCENT.skills.hex
+  const [mounted, setMounted] = useState(false)
 
-  const skillCategories = [
-    {
-      category: "Languages",
-      skills: [
-        "Java",
-        "Python",
-        "C++",
-        "C",
-        "C#",
-        "JavaScript",
-        "TypeScript",
-        "SQL",
-        "Kotlin"
-      ]
-    },
-    {
-      category: "Frameworks & Libraries",
-      skills: [
-        "React",
-        "Angular",
-        "Spring Boot",
-        "Express.js",
-        "Scikit-learn",
-        "PyTorch",
-        "Java Swing"
-      ]
-    },
-    {
-      category: "Cloud & DevOps",
-      skills: [
-        "AWS",
-        "Docker",
-        "Kubernetes",
-        "Jenkins",
-        "Gradle",
-        "Git",
-        "Linux",
-        "CI/CD"
-      ]
-    },
-    {
-      category: "Databases & APIs",
-      skills: [
-        "MySQL",
-        "Oracle",
-        "ArangoDB",
-        "Firebase",
-        "GraphQL",
-        "REST APIs"
-      ]
-    },
-    {
-      category: "Systems & Engineering",
-      skills: [
-        "Distributed Systems",
-        "System Design",
-        "Concurrency",
-        "Caching",
-        "Unit Testing",
-        "Integration Testing"
-      ]
-    },
-    {
-      category: "Data & Observability",
-      skills: [
-        "Machine Learning",
-        "Reinforcement Learning",
-        "Splunk",
-        "Monitoring",
-        "Logging Pipelines"
-      ]
-    }
-  ]
+  useEffect(() => {
+    const t = setTimeout(() => setMounted(true), 60)
+    return () => clearTimeout(t)
+  }, [])
 
   return (
-    <div className="flex flex-col gap-5">
-      <div>
-        <p className="text-xs font-mono tracking-[0.2em] uppercase mb-2" style={{ color: accent }}>Skills</p>
-        <h2 className="text-2xl md:text-3xl font-sans font-bold text-white" style={{ letterSpacing: "-0.02em" }}>Technical Stack</h2>
+    <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+
+      {/* Header */}
+      <div style={{ opacity: mounted ? 1 : 0, transform: mounted ? "none" : "translateY(8px)", transition: "all 0.45s ease 0.04s" }}>
+        <p style={{ margin: 0, fontSize: "9.5px", fontFamily: "monospace", letterSpacing: "0.22em", textTransform: "uppercase", color: accent, marginBottom: "5px" }}>
+          Skills / Capability Map
+        </p>
+        <h2 style={{ margin: 0, fontSize: "22px", fontFamily: "sans-serif", fontWeight: 700, color: "white", letterSpacing: "-0.02em" }}>
+          Technical Stack
+        </h2>
+        <p style={{ margin: "5px 0 0", fontSize: "10px", fontFamily: "monospace", color: "rgba(255,255,255,0.22)", letterSpacing: "0.04em" }}>
+          4 capability clusters · {CAPABILITY_CLUSTERS.reduce((s, c) => s + c.skills.length, 0)} skills
+        </p>
       </div>
-      <div className="h-px" style={{ background: `linear-gradient(90deg, ${accent}40, transparent)` }} />
-      {skillCategories.map((cat) => (
-        <div key={cat.category}>
-          <h3 className="text-xs font-mono uppercase tracking-widest mb-3" style={{ color: `${accent}cc` }}>{cat.category}</h3>
-          <div className="flex flex-wrap gap-2">
-            {cat.skills.map((skill) => (
-              <span key={skill}
-                className="px-3 py-1.5 text-xs font-mono rounded-lg transition-all duration-200 cursor-default"
-                style={{ background: `${accent}12`, color: "rgba(255,255,255,0.7)", border: `1px solid ${accent}20` }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = `${accent}50`; (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.95)" }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = `${accent}20`; (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.7)" }}
-              >
-                {skill}
+
+      <div style={{ height: "1px", background: `linear-gradient(90deg, ${accent}40, transparent)` }} />
+
+      {/* Cluster grid — 2 columns */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+        {CAPABILITY_CLUSTERS.map((cluster, ci) => (
+          <div
+            key={cluster.id}
+            style={{
+              position:   "relative",
+              padding:    "14px",
+              borderRadius: "14px",
+              background: `rgba(${cluster.rgb},0.04)`,
+              border:     `1px solid rgba(${cluster.rgb},0.14)`,
+              overflow:   "hidden",
+              opacity:    mounted ? 1 : 0,
+              transform:  mounted ? "translateY(0)" : "translateY(10px)",
+              transition: `opacity 0.45s ease ${0.10 + ci * 0.08}s, transform 0.45s cubic-bezier(0.16,1,0.3,1) ${0.10 + ci * 0.08}s`,
+            }}
+          >
+            {/* Top accent line */}
+            <div style={{
+              position: "absolute", top: 0, left: 0, right: 0, height: "1px",
+              background: `linear-gradient(90deg, transparent, rgba(${cluster.rgb},0.45), transparent)`,
+            }} />
+
+            {/* Cluster header */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                <div style={{ width: "6px", height: "6px", borderRadius: "2px", background: cluster.color, opacity: 0.85 }} />
+                <span style={{ fontSize: "8.5px", fontFamily: "monospace", letterSpacing: "0.14em", textTransform: "uppercase", color: `rgba(${cluster.rgb},0.75)` }}>
+                  {cluster.label}
+                </span>
+              </div>
+              <span style={{ fontSize: "7.5px", fontFamily: "monospace", color: "rgba(255,255,255,0.18)", letterSpacing: "0.06em" }}>
+                {cluster.skills.length}
               </span>
-            ))}
+            </div>
+
+            {/* Skill pills */}
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+              {cluster.skills.map(skill => (
+                <span
+                  key={skill}
+                  style={{
+                    fontSize: "9px", fontFamily: "monospace", padding: "2.5px 7px", borderRadius: "6px",
+                    background: `rgba(${cluster.rgb},0.08)`,
+                    color: "rgba(255,255,255,0.55)",
+                    border: `1px solid rgba(${cluster.rgb},0.15)`,
+                    transition: "all 0.15s ease", cursor: "default",
+                  }}
+                  onMouseEnter={e => {
+                    const el = e.currentTarget as HTMLElement
+                    el.style.background = `rgba(${cluster.rgb},0.20)`
+                    el.style.color = "rgba(255,255,255,0.92)"
+                    el.style.borderColor = `rgba(${cluster.rgb},0.42)`
+                  }}
+                  onMouseLeave={e => {
+                    const el = e.currentTarget as HTMLElement
+                    el.style.background = `rgba(${cluster.rgb},0.08)`
+                    el.style.color = "rgba(255,255,255,0.55)"
+                    el.style.borderColor = `rgba(${cluster.rgb},0.15)`
+                  }}
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
+
     </div>
   )
 }
@@ -1370,41 +1405,131 @@ function LifeContent() {
 }
 
 function ContactContent() {
-  const accent = SECTION_ACCENT.contact.hex
-  const links = [
-    { href: "mailto:frankkaiwen.yu@gmail.com", icon: <Mail className="h-4 w-4" />, label: "Email", sub: "frankkaiwen.yu@gmail.com" },
-    { href: "https://github.com/frankyu77", icon: <Github className="h-4 w-4" />, label: "GitHub", sub: "github.com/frankyu77" },
-    { href: "https://linkedin.com/in/frankyu77", icon: <Linkedin className="h-4 w-4" />, label: "LinkedIn", sub: "linkedin.com/in/frankyu77" },
-  ]
+  const accent    = SECTION_ACCENT.contact.hex
+  const accentRgb = SECTION_ACCENT.contact.rgb
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    const t = setTimeout(() => setMounted(true), 60)
+    return () => clearTimeout(t)
+  }, [])
 
   return (
-    <div className="flex flex-col gap-5">
-      <div>
-        <p className="text-xs font-mono tracking-[0.2em] uppercase mb-2" style={{ color: accent }}>Contact</p>
-        <h2 className="text-2xl md:text-3xl font-sans font-bold text-white" style={{ letterSpacing: "-0.02em" }}>Get In Touch</h2>
+    <div style={{ display: "flex", flexDirection: "column", gap: "22px" }}>
+
+      {/* Header */}
+      <div style={{ opacity: mounted ? 1 : 0, transform: mounted ? "none" : "translateY(10px)", transition: "all 0.45s ease 0.04s" }}>
+        <p style={{ margin: 0, fontSize: "9.5px", fontFamily: "monospace", letterSpacing: "0.22em", textTransform: "uppercase", color: accent, marginBottom: "6px" }}>
+          Contact
+        </p>
+        <h2 style={{ margin: 0, fontSize: "24px", fontFamily: "sans-serif", fontWeight: 700, color: "white", letterSpacing: "-0.02em", lineHeight: 1.2, marginBottom: "8px" }}>
+          Let&apos;s build something together.
+        </h2>
+        <p style={{ margin: 0, fontSize: "12px", fontFamily: "monospace", color: "rgba(255,255,255,0.35)", letterSpacing: "0.02em" }}>
+          Open to full-time roles, internships, and interesting projects.
+        </p>
       </div>
-      <div className="h-px" style={{ background: `linear-gradient(90deg, ${accent}40, transparent)` }} />
-      <p className="text-sm text-white/50 leading-relaxed">
-        Always interested in new projects and opportunities. Whether you have a question or just want to say hello, my inbox is open.
-      </p>
-      <div className="flex flex-col gap-2.5">
-        {links.map(({ href, icon, label, sub }) => (
-          <a key={label} href={href}
-            className="group flex items-center gap-3 p-4 rounded-xl transition-all duration-200"
-            style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}
-            onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.borderColor = `${accent}40`; el.style.background = "rgba(255,255,255,0.06)" }}
-            onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.borderColor = "rgba(255,255,255,0.07)"; el.style.background = "rgba(255,255,255,0.03)" }}
+
+      <div style={{ height: "1px", background: `linear-gradient(90deg, ${accent}40, transparent)` }} />
+
+      {/* Primary CTA — Email */}
+      <a
+        href="mailto:frankkaiwen.yu@gmail.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          padding: "18px 20px", borderRadius: "14px",
+          background: `linear-gradient(135deg, rgba(${accentRgb},0.12) 0%, rgba(${accentRgb},0.05) 100%)`,
+          border: `1px solid rgba(${accentRgb},0.32)`,
+          boxShadow: `0 0 28px rgba(${accentRgb},0.06), inset 0 1px 0 rgba(255,255,255,0.04)`,
+          textDecoration: "none",
+          transition: "all 0.22s ease",
+          opacity: mounted ? 1 : 0,
+          transform: mounted ? "translateY(0)" : "translateY(8px)",
+        }}
+        onMouseEnter={e => {
+          const el = e.currentTarget as HTMLElement
+          el.style.boxShadow = `0 0 48px rgba(${accentRgb},0.14), inset 0 1px 0 rgba(255,255,255,0.06)`
+          el.style.borderColor = `rgba(${accentRgb},0.52)`
+          el.style.background = `linear-gradient(135deg, rgba(${accentRgb},0.18) 0%, rgba(${accentRgb},0.08) 100%)`
+        }}
+        onMouseLeave={e => {
+          const el = e.currentTarget as HTMLElement
+          el.style.boxShadow = `0 0 28px rgba(${accentRgb},0.06), inset 0 1px 0 rgba(255,255,255,0.04)`
+          el.style.borderColor = `rgba(${accentRgb},0.32)`
+          el.style.background = `linear-gradient(135deg, rgba(${accentRgb},0.12) 0%, rgba(${accentRgb},0.05) 100%)`
+        }}
+      >
+        <div>
+          <p style={{ margin: 0, fontSize: "8.5px", fontFamily: "monospace", letterSpacing: "0.18em", textTransform: "uppercase", color: `rgba(${accentRgb},0.55)`, marginBottom: "4px" }}>
+            Email — preferred
+          </p>
+          <p style={{ margin: 0, fontSize: "13px", fontFamily: "monospace", color: "rgba(255,255,255,0.88)", letterSpacing: "0.01em" }}>
+            frankkaiwen.yu@gmail.com
+          </p>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "32px", height: "32px", borderRadius: "8px", background: `rgba(${accentRgb},0.15)`, flexShrink: 0 }}>
+          <ExternalLink style={{ width: "14px", height: "14px", color: accent }} />
+        </div>
+      </a>
+
+      {/* Secondary — GitHub + LinkedIn */}
+      <div style={{
+        display: "flex", gap: "10px",
+        opacity: mounted ? 1 : 0,
+        transform: mounted ? "translateY(0)" : "translateY(8px)",
+        transition: "opacity 0.45s ease 0.12s, transform 0.45s ease 0.12s",
+      }}>
+        {[
+          { href: "https://github.com/frankyu77",       icon: <Github   style={{ width: "15px", height: "15px" }} />, label: "GitHub",   sub: "github.com/frankyu77"   },
+          { href: "https://linkedin.com/in/frankyu77", icon: <Linkedin style={{ width: "15px", height: "15px" }} />, label: "LinkedIn", sub: "linkedin.com/in/frankyu77" },
+        ].map(({ href, icon, label, sub }) => (
+          <a
+            key={label}
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              flex: 1, display: "flex", alignItems: "center", gap: "10px",
+              padding: "13px 14px", borderRadius: "12px",
+              background: "rgba(255,255,255,0.03)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              textDecoration: "none",
+              transition: "all 0.18s ease",
+            }}
+            onMouseEnter={e => {
+              const el = e.currentTarget as HTMLElement
+              el.style.background = "rgba(255,255,255,0.07)"
+              el.style.borderColor = `rgba(${accentRgb},0.28)`
+            }}
+            onMouseLeave={e => {
+              const el = e.currentTarget as HTMLElement
+              el.style.background = "rgba(255,255,255,0.03)"
+              el.style.borderColor = "rgba(255,255,255,0.08)"
+            }}
           >
-            <div className="flex items-center justify-center h-9 w-9 rounded-lg flex-shrink-0" style={{ background: `${accent}18` }}>
-              <span style={{ color: accent }}>{icon}</span>
-            </div>
+            <div style={{ color: "rgba(255,255,255,0.40)", flexShrink: 0 }}>{icon}</div>
             <div>
-              <p className="text-sm font-sans font-medium text-white">{label}</p>
-              <p className="text-xs font-mono" style={{ color: "rgba(255,255,255,0.35)" }}>{sub}</p>
+              <p style={{ margin: 0, fontSize: "11px", fontFamily: "monospace", color: "rgba(255,255,255,0.72)", fontWeight: 600 }}>{label}</p>
+              <p style={{ margin: 0, fontSize: "8.5px", fontFamily: "monospace", color: "rgba(255,255,255,0.25)", letterSpacing: "0.02em", marginTop: "1px" }}>{sub}</p>
             </div>
           </a>
         ))}
       </div>
+
+      {/* Footer note */}
+      <div style={{
+        display: "flex", alignItems: "center", gap: "7px",
+        opacity: mounted ? 0.55 : 0,
+        transition: "opacity 0.4s ease 0.22s",
+      }}>
+        <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: accent, opacity: 0.7 }} />
+        <p style={{ margin: 0, fontSize: "9.5px", fontFamily: "monospace", color: "rgba(255,255,255,0.35)", letterSpacing: "0.04em" }}>
+          Typically responds within 24 hours
+        </p>
+      </div>
+
     </div>
   )
 }
@@ -1420,7 +1545,7 @@ const CONTENT_MAP: Record<string, () => React.JSX.Element> = {
 }
 
 /* ─── Main panel ─── */
-export default function ContentPanel({ activeNode, onClose }: { activeNode: string | null; onClose: () => void }) {
+export default function ContentPanel({ activeNode, onClose, onNavigate }: { activeNode: string | null; onClose: () => void; onNavigate: (id: string) => void }) {
   const ContentComponent = activeNode ? CONTENT_MAP[activeNode] : null
   const accent = activeNode ? SECTION_ACCENT[activeNode] : SECTION_ACCENT.about
   const plexusColor = `rgb(${accent.rgb})`
@@ -1483,12 +1608,44 @@ export default function ContentPanel({ activeNode, onClose }: { activeNode: stri
             {ContentComponent && <ContentComponent />}
           </div>
 
-          {/* Footer */}
-          <div className="px-6 pb-4 flex-shrink-0">
+          {/* Footer — section navigation dots */}
+          <div className="px-5 pb-4 flex-shrink-0">
             <div className="h-px mb-3" style={{ background: "rgba(255,255,255,0.05)" }} />
-            <p className="text-xs font-mono text-center" style={{ color: "rgba(255,255,255,0.18)" }}>
-              Press <kbd className="px-1 py-0.5 rounded text-xs" style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)" }}>Esc</kbd> or click 'x' to return
-            </p>
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "4px" }}>
+              {SECTION_NAV.map(s => {
+                const isActive = s.id === activeNode
+                return (
+                  <button
+                    key={s.id}
+                    onClick={() => onNavigate(s.id)}
+                    title={s.label}
+                    style={{
+                      display: "flex", flexDirection: "column", alignItems: "center", gap: "3px",
+                      padding: "5px 7px", borderRadius: "8px", cursor: "pointer",
+                      background: isActive ? `${s.color}12` : "transparent",
+                      border: "none", transition: "all 0.18s ease",
+                    }}
+                    onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)" }}
+                    onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = "transparent" }}
+                  >
+                    <div style={{
+                      width:        isActive ? "7px" : "5px",
+                      height:       isActive ? "7px" : "5px",
+                      borderRadius: "50%",
+                      background:   s.color,
+                      opacity:      isActive ? 1 : 0.25,
+                      boxShadow:    isActive ? `0 0 7px ${s.color}` : "none",
+                      transition:   "all 0.2s ease",
+                    }} />
+                    {isActive && (
+                      <span style={{ fontSize: "6px", fontFamily: "monospace", letterSpacing: "0.12em", color: s.color, opacity: 0.8, whiteSpace: "nowrap" }}>
+                        {s.label.toUpperCase()}
+                      </span>
+                    )}
+                  </button>
+                )
+              })}
+            </div>
           </div>
         </div>
       </div>

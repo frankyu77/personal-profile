@@ -252,63 +252,226 @@ function SkillsContent() {
   )
 }
 
+/* ─── Experience data ─── */
+interface ExpItem {
+  id: string; role: string; team: string; company: string
+  period: string; isCurrent: boolean; color: string
+  bullets: string[]; tech: string[]
+}
+
+const EXP_DATA: ExpItem[] = [
+  {
+    id: "tier3",
+    role: "Software Developer Intern",
+    team: "Tier 3 / Systems Engineering",
+    company: "Pason Systems",
+    period: "Jan 2024 — Present", 
+    isCurrent: true,
+    color: "#8b5cf6",
+    bullets: [
+      "Automated provisioning & diagnostics for 300+ distributed Linux workstations — 50% less setup time",
+      "Built Splunk pipelines processing 10K+ logs/day — reduced incident resolution time by 30%",
+      "Debugged production issues via complex SQL across distributed multi-site environments",
+    ],
+    tech: ["Python", "Linux", "Splunk", "SQL", "Systems Debugging"],
+  },
+    {
+    id: "build",
+    role: "Software Developer Intern",
+    team: "Build & Infrastructure",
+    company: "Pason Systems",
+    period: "May 2024 — Dec 2024",
+    isCurrent: false,
+    color: "#3b82f6",
+    bullets: [
+      "Migrated CI/CD pipelines to auto-scaling AWS EC2 Docker runners via Terraform — 60% faster builds",
+      "Built Gradle plugins for dependency governance & license compliance, adopted across 20+ repos",
+      "Designed caching strategies that cut pipeline execution time and improved team-wide developer velocity",
+    ],
+    tech: ["Java", "Gradle", "AWS", "Docker", "Terraform", "CI/CD"],
+  },
+  {
+    id: "ta",
+    role: "Teaching Assistant — CPSC 304",
+    team: "Relational Databases",
+    company: "University of British Columbia",
+    period: "Jan 2025 — Apr 2025",
+    isCurrent: false,
+    color: "#22d3ee",
+    bullets: [
+      "Led weekly labs for 30+ students on schema design, SQL optimization, and scalable architectures",
+      "Mentored 500+ students on cloud-ready app design and API-to-database integration patterns",
+    ],
+    tech: ["SQL", "MySQL", "Oracle", "Database Design"],
+  },
+]
+
+function ExperienceCard({ exp, index, mounted }: { exp: ExpItem; index: number; mounted: boolean }) {
+  const [hovered, setHovered] = useState(false)
+  const isFirst = index === 0
+  const delay   = `${index * 0.14 + 0.06}s`
+
+  return (
+    <div style={{
+      opacity:    mounted ? 1 : 0,
+      transform:  mounted ? "translateY(0)" : "translateY(14px)",
+      transition: `opacity 0.5s ease ${delay}, transform 0.5s cubic-bezier(0.16,1,0.3,1) ${delay}`,
+    }}>
+      <div
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        style={{
+          position:  "relative",
+          padding:   "16px 18px",
+          borderRadius: "14px",
+          background: isFirst
+            ? `linear-gradient(145deg, rgba(59,130,246,0.07) 0%, rgba(8,6,20,0.88) 100%)`
+            : "rgba(255,255,255,0.025)",
+          border: `1px solid ${hovered ? exp.color + "55" : isFirst ? exp.color + "32" : "rgba(255,255,255,0.07)"}`,
+          boxShadow:  hovered
+            ? `0 8px 28px rgba(0,0,0,0.28), 0 0 28px ${exp.color}08`
+            : isFirst ? `0 0 24px ${exp.color}06` : "none",
+          transform:  hovered ? "translateY(-2px)" : "translateY(0)",
+          transition: "border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease",
+        }}
+      >
+        {/* Top accent line — current role only */}
+        {isFirst && (
+          <div style={{
+            position: "absolute", top: 0, left: "8%", right: "8%", height: "1px",
+            background: `linear-gradient(90deg, transparent, ${exp.color}55, transparent)`,
+          }} />
+        )}
+
+        {/* Header */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "10px", marginBottom: "3px" }}>
+          <div style={{ flex: 1 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "7px", flexWrap: "wrap", marginBottom: "3px" }}>
+              <h3 style={{ margin: 0, fontSize: "14px", fontFamily: "sans-serif", fontWeight: 700, color: "white", letterSpacing: "-0.01em", lineHeight: 1.3 }}>
+                {exp.role}
+              </h3>
+              {exp.isCurrent && (
+                <span style={{
+                  fontSize: "7.5px", fontFamily: "monospace", letterSpacing: "0.12em",
+                  padding: "2px 7px", borderRadius: "100px",
+                  background: `${exp.color}1a`, color: exp.color,
+                  border: `1px solid ${exp.color}45`,
+                }}>CURRENT</span>
+              )}
+            </div>
+            <p style={{ margin: 0, fontSize: "11px", fontFamily: "monospace", color: `${exp.color}bb`, letterSpacing: "0.02em" }}>
+              {exp.company}{exp.team ? ` — ${exp.team}` : ""}
+            </p>
+          </div>
+          <span style={{
+            fontSize: "9px", fontFamily: "monospace", color: "rgba(255,255,255,0.28)",
+            letterSpacing: "0.04em", whiteSpace: "nowrap", flexShrink: 0, paddingTop: "2px",
+          }}>
+            {exp.period}
+          </span>
+        </div>
+
+        <div style={{ height: "1px", background: `linear-gradient(90deg, ${exp.color}1a, transparent)`, margin: "10px 0" }} />
+
+        {/* Bullets */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "5px", marginBottom: "12px" }}>
+          {exp.bullets.map((bullet, j) => (
+            <div key={j} style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
+              <div style={{
+                width: "4px", height: "4px", borderRadius: "50%",
+                background: exp.color, flexShrink: 0, marginTop: "5px",
+                boxShadow: `0 0 4px ${exp.color}55`,
+              }} />
+              <p style={{ margin: 0, fontSize: "11px", color: "rgba(255,255,255,0.52)", fontFamily: "monospace", lineHeight: 1.68 }}>
+                {bullet}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* Tech pills */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "5px" }}>
+          {exp.tech.map(t => (
+            <span key={t} style={{
+              fontSize: "8.5px", fontFamily: "monospace", letterSpacing: "0.04em",
+              padding: "2.5px 8px", borderRadius: "100px",
+              background: `${exp.color}0e`, color: `${exp.color}cc`,
+              border: `1px solid ${exp.color}22`,
+            }}>{t}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function ExperienceContent() {
   const accent = SECTION_ACCENT.experience.hex
-  const experiences = [
-    {
-      role: "Software Developer Intern", 
-      company: "Pason Systems — Build & Infrastructure Team", 
-      period: "Jan 2024 — Present",
-      description:
-        "Designed and scaled CI/CD infrastructure by migrating pipelines to auto-scaling AWS EC2 Docker runners using Terraform, improving build performance and reliability. Developed custom Gradle plugins for dependency governance, license compliance, and CI policy enforcement, adopted across 20+ repositories. Optimized build pipelines and caching strategies, reducing execution time and improving developer velocity across teams.",
-      tech: ["Java", "Gradle", "AWS", "Docker", "Terraform", "CI/CD"],
-    },
-    {
-      role: "Software Developer Intern", 
-      company: "Pason Systems — Tier 3 / Systems Engineering Team", 
-      period: "May 2024 - Dec 2024",
-      description:
-        "Built Python automation and diagnostic tooling for 300+ distributed Linux workstations, reducing provisioning and troubleshooting time by 50% and improving field reliability. Engineered and optimized Splunk pipelines processing 10K+ daily logs and metrics, enabling faster root cause analysis and reducing incident resolution time by 30%. Investigated production issues using complex SQL queries and system-level debugging across distributed environments.",
-      tech: ["Python", "Linux", "Splunk", "SQL", "Systems Debugging"],
-    },
-    {
-      role: "Teaching Assistant — CPSC 304", 
-      company: "University of British Columbia", 
-      period: "Jan 2025 — Apr 2025",
-      description:
-        "Taught database systems concepts including schema design, SQL, and scalable architectures to 30+ students. Mentored 500+ students building cloud-ready applications, with focus on performance tuning, query optimization, and API-to-database integration.",
-      tech: ["SQL", "MySQL", "Oracle", "Database Design"],
-    },
-  ]
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    const t = setTimeout(() => setMounted(true), 60)
+    return () => clearTimeout(t)
+  }, [])
 
   return (
     <div className="flex flex-col gap-5">
+
+      {/* Header */}
       <div>
         <p className="text-xs font-mono tracking-[0.2em] uppercase mb-2" style={{ color: accent }}>Experience</p>
-        <h2 className="text-2xl md:text-3xl font-sans font-bold text-white" style={{ letterSpacing: "-0.02em" }}>Work History</h2>
+        <h2 className="text-2xl md:text-3xl font-sans font-bold text-white" style={{ letterSpacing: "-0.02em" }}>
+          Professional Experience
+        </h2>
+        <p className="text-xs font-mono mt-2 leading-relaxed" style={{ color: "rgba(255,255,255,0.30)" }}>
+          Building scalable systems, developer tools, and production infrastructure.
+        </p>
       </div>
       <div className="h-px" style={{ background: `linear-gradient(90deg, ${accent}40, transparent)` }} />
-      <div className="flex flex-col gap-3">
-        {experiences.map((exp, i) => (
-          <div key={`${exp.role}-${i}`}
-            className="flex flex-col gap-2 p-4 rounded-xl transition-all duration-200"
-            style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}
-            onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.borderColor = `${accent}35`; el.style.background = "rgba(255,255,255,0.05)" }}
-            onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.borderColor = "rgba(255,255,255,0.07)"; el.style.background = "rgba(255,255,255,0.03)" }}
-          >
-            <div className="flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between">
-              <h3 className="text-sm font-sans font-semibold text-white">{exp.role}</h3>
-              <span className="text-xs font-mono" style={{ color: "rgba(255,255,255,0.3)" }}>{exp.period}</span>
+
+      {/* ── Vertical timeline ── */}
+      <div style={{ position: "relative" }}>
+
+        {/* Vertical gradient line — draws from top on mount */}
+        <div style={{
+          position:        "absolute",
+          left:            "4px",
+          top:             "25px",
+          bottom:          "0",
+          width:           "1px",
+          background:      "linear-gradient(to bottom, #3b82f6 0%, #8b5cf6 45%, #22d3ee 78%, transparent 100%)",
+          opacity:          mounted ? 0.28 : 0,
+          transform:        mounted ? "scaleY(1)" : "scaleY(0)",
+          transformOrigin: "top",
+          transition:      "transform 0.95s cubic-bezier(0.16,1,0.3,1) 0.08s, opacity 0.5s ease 0.08s",
+        }} />
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+          {EXP_DATA.map((exp, i) => (
+            <div key={exp.id} style={{ display: "flex", gap: "18px", alignItems: "flex-start" }}>
+
+              {/* Timeline dot */}
+              <div style={{
+                flexShrink: 0,
+                width:      "10px",
+                height:     "10px",
+                borderRadius: "50%",
+                marginTop:  "20px",
+                background: exp.color,
+                boxShadow:  `0 0 ${exp.isCurrent ? "10px" : "6px"} ${exp.color}${exp.isCurrent ? "80" : "50"}`,
+                position:   "relative",
+                zIndex:     1,
+                opacity:    mounted ? 1 : 0,
+                transition: `opacity 0.4s ease ${i * 0.14 + 0.05}s`,
+              }} />
+
+              {/* Card */}
+              <div style={{ flex: 1 }}>
+                <ExperienceCard exp={exp} index={i} mounted={mounted} />
+              </div>
             </div>
-            <p className="text-xs font-mono" style={{ color: accent }}>{exp.company}</p>
-            <p className="text-xs text-white/45 leading-relaxed">{exp.description}</p>
-            <div className="flex flex-wrap gap-1.5 pt-0.5">
-              {exp.tech.map(t => (
-                <span key={t} className="px-2 py-0.5 text-xs font-mono rounded-md" style={{ background: `${accent}15`, color: accent, border: `1px solid ${accent}25` }}>{t}</span>
-              ))}
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   )

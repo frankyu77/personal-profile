@@ -17,11 +17,12 @@ interface SectionDef {
 }
 
 const SECTIONS: SectionDef[] = [
-  { id: "about",      label: "About Me",   origin: [0,    0.4,   0],   color: "#c4b5fd", emissive: "#7c3aed", accentHex: "#8b5cf6", preview: ["UBC Computer Science", "Minor in Commerce", "Building Tech × Business"]    },
-  { id: "skills",     label: "Skills",     origin: [-3,   1.8,  -0.3], color: "#67e8f9", emissive: "#0891b2", accentHex: "#22d3ee", preview: ["Java, Python & C++", "AWS, Docker & Kubernetes", "Distributed Systems & APIs"]  },
-  { id: "experience", label: "Experience", origin: [2.8,  1.5,  -0.2], color: "#93c5fd", emissive: "#1d4ed8", accentHex: "#3b82f6", preview: ["2 companies", "2+ years", "Team lead"]                     },
-  { id: "projects",   label: "Projects",   origin: [-2,  -1.4,   0.2], color: "#d8b4fe", emissive: "#7c3aed", accentHex: "#8b5cf6", preview: ["click me hehe"]                },
-  { id: "contact",    label: "Contact",    origin: [2.5, -1.6,  -0.1], color: "#f9a8d4", emissive: "#be185d", accentHex: "#ec4899", preview: ["frankkaiwen.yu@gmail.com", "github.com/frankyu77", "linkedin.com/in/frankyu77"] },
+  { id: "about",      label: "About Me",    origin: [0,    0.4,   0],   color: "#c4b5fd", emissive: "#7c3aed", accentHex: "#8b5cf6", preview: ["UBC Computer Science", "Minor in Commerce", "Building Tech × Business"]    },
+  { id: "skills",     label: "Skills",      origin: [-3,   1.8,  -0.3], color: "#67e8f9", emissive: "#0891b2", accentHex: "#22d3ee", preview: ["Java, Python & C++", "AWS, Docker & Kubernetes", "Distributed Systems & APIs"]  },
+  { id: "experience", label: "Experience",  origin: [2.8,  1.5,  -0.2], color: "#93c5fd", emissive: "#1d4ed8", accentHex: "#3b82f6", preview: ["2 companies", "2+ years", "Team lead"]                     },
+  { id: "projects",   label: "Projects",    origin: [-2,  -1.4,   0.2], color: "#d8b4fe", emissive: "#7c3aed", accentHex: "#8b5cf6", preview: ["click me hehe"]                },
+  { id: "contact",    label: "Contact",     origin: [2.5, -1.6,  -0.1], color: "#f9a8d4", emissive: "#be185d", accentHex: "#ec4899", preview: ["frankkaiwen.yu@gmail.com", "github.com/frankyu77", "linkedin.com/in/frankyu77"] },
+  { id: "life",       label: "Beyond Code", origin: [0.4, -2.4,   0.2], color: "#fde68a", emissive: "#d97706", accentHex: "#f59e0b", preview: ["Skiing & snowboarding", "Hiking BC trails", "Exploring the world"] },
 ]
 
 /* ─── Constants ─── */
@@ -470,6 +471,7 @@ const NODE_STYLES: NodeStyle[] = [
   { ring1R: 0.19, ring1T: 0.011, ring1Segs: 48, ring2R: 0.26, ring2T: 0.007, ring2Segs: 24, ring1Speed:  0.003, ring2Speed:  0.002, orbitN: 2 }, // Experience
   { ring1R: 0.20, ring1T: 0.012, ring1Segs: 6,  ring2R: 0.28, ring2T: 0.010, ring2Segs: 6,  ring1Speed:  0.012, ring2Speed: -0.007, orbitN: 3 }, // Projects
   { ring1R: 0.20, ring1T: 0.007, ring1Segs: 64, ring2R: 0.27, ring2T: 0.004, ring2Segs: 64, ring1Speed:  0.009, ring2Speed:  0.006, orbitN: 3 }, // Contact
+  { ring1R: 0.22, ring1T: 0.006, ring1Segs: 64, ring2R: 0.31, ring2T: 0.004, ring2Segs: 64, ring1Speed:  0.003, ring2Speed: -0.002, orbitN: 3 }, // Life — slow, organic, wide halo
 ]
 
 /* ─── Section node — multi-layer energy core ─── */
@@ -738,11 +740,12 @@ export default function NeuralNetwork({ activeNode, onNodeClick }: { activeNode:
     boundsRef.current = { ambBx: hw * 1.08, ambBy: hh * 1.08, secBx: hw * 0.90, secBy: hh * 0.84 }
 
     const newBases: [number, number, number][] = [
-      [0,           hh * 0.06,   0  ],
-      [-hw * 0.74,  hh * 0.72, -0.3],
-      [ hw * 0.74,  hh * 0.72, -0.2],
-      [-hw * 0.66, -hh * 0.72,  0.2],
-      [ hw * 0.66, -hh * 0.72, -0.1],
+      [0,           hh * 0.06,   0   ],
+      [-hw * 0.74,  hh * 0.72, -0.3 ],
+      [ hw * 0.74,  hh * 0.72, -0.2 ],
+      [-hw * 0.66, -hh * 0.72,  0.2 ],
+      [ hw * 0.66, -hh * 0.72, -0.1 ],
+      [ hw * 0.08, -hh * 0.94,  0.15],
     ]
     newBases.forEach(([x, y, z], i) => {
       sectionPhysics[i].base.set(x, y, z)

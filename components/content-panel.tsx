@@ -11,6 +11,7 @@ const SECTION_ACCENT: Record<string, { hex: string; rgb: string }> = {
   experience: { hex: "#3b82f6", rgb: "59,130,246"  },
   projects:   { hex: "#8b5cf6", rgb: "139,92,246"  },
   contact:    { hex: "#ec4899", rgb: "236,72,153"  },
+  life:       { hex: "#f59e0b", rgb: "245,158,11"  },
 }
 
 /* ─── Mini plexus canvas background ─── */
@@ -676,6 +677,358 @@ function ProjectsContent() {
   )
 }
 
+/* ─── Life / Beyond Code ─── */
+interface LifeItem {
+  src: string
+  title: string
+  description: string
+  category: string
+  tall?: boolean
+}
+
+const LIFE_ITEMS: LifeItem[] = [
+  {
+    src: "/life/skiing.jpg",
+    title: "Skiing Whistler",
+    description: "Weekend escapes to BC mountains — my favorite way to reset after a long semester.",
+    category: "Adventures",
+    tall: false,
+  },
+  {
+    src: "/life/hiking.jpg",
+    title: "Garibaldi Lake",
+    description: "13km of pure BC alpine beauty. Worth every step and every sore leg the next day.",
+    category: "Adventures",
+    tall: true,
+  },
+  {
+    src: "/life/japan.jpg",
+    title: "Tokyo, Japan",
+    description: "Summer trip through Japan — the food, the trains, the vending machines. Unreal city.",
+    category: "Travel",
+    tall: true,
+  },
+  {
+    src: "/life/bball.jpg",
+    title: "Basketball",
+    description: "Weekly pickup runs at UBC. Nothing beats a good game with friends after a long week.",
+    category: "Sports",
+    tall: false,
+  },
+  {
+    src: "/life/hk.jpg",
+    title: "Hong Kong",
+    description: "Grew up between here and Vancouver. Always feels like coming home.",
+    category: "Travel",
+    tall: false,
+  },
+  {
+    src: "/life/snowboard.jpg",
+    title: "Snowboarding",
+    description: "Still learning but making progress. Cypress Mountain every chance I get.",
+    category: "Adventures",
+    tall: true,
+  },
+  {
+    src: "/life/food.jpg",
+    title: "Ramen Research",
+    description: "Methodically trying every ramen spot in Vancouver. It's serious work, really.",
+    category: "Life",
+    tall: false,
+  },
+  {
+    src: "/life/sunset.jpg",
+    title: "UBC Sunsets",
+    description: "The cliffs at UBC at golden hour. Hard to beat when you need to clear your head.",
+    category: "Life",
+    tall: false,
+  },
+]
+
+const FALLBACK_GRADIENTS: Record<string, string> = {
+  Adventures: "linear-gradient(135deg, #92400e 0%, #d97706 100%)",
+  Travel:     "linear-gradient(135deg, #1e3a5f 0%, #3b82f6 100%)",
+  Sports:     "linear-gradient(135deg, #064e3b 0%, #10b981 100%)",
+  Life:       "linear-gradient(135deg, #451a03 0%, #b45309 100%)",
+}
+
+function ImageCard({ item, onClick, accent }: { item: LifeItem; onClick: () => void; accent: string }) {
+  const [hovered, setHovered] = useState(false)
+  const [imgError, setImgError] = useState(false)
+  const height = item.tall ? "188px" : "132px"
+
+  return (
+    <div
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        position: "relative", height, borderRadius: "12px", overflow: "hidden",
+        cursor: "pointer", flexShrink: 0,
+        background: FALLBACK_GRADIENTS[item.category] ?? "linear-gradient(135deg, #374151, #1f2937)",
+      }}
+    >
+      {!imgError && (
+        <img
+          src={item.src}
+          alt={item.title}
+          onError={() => setImgError(true)}
+          loading="lazy"
+          style={{
+            width: "100%", height: "100%", objectFit: "cover", display: "block",
+            transform: hovered ? "scale(1.07)" : "scale(1)",
+            transition: "transform 0.45s cubic-bezier(0.16,1,0.3,1)",
+          }}
+        />
+      )}
+
+      {/* Gradient overlay */}
+      <div style={{
+        position: "absolute", inset: 0, transition: "background 0.3s ease",
+        background: hovered
+          ? "linear-gradient(to top, rgba(0,0,0,0.90) 0%, rgba(0,0,0,0.45) 55%, transparent 100%)"
+          : "linear-gradient(to top, rgba(0,0,0,0.60) 0%, rgba(0,0,0,0.10) 60%, transparent 100%)",
+      }} />
+
+      {/* Text overlay */}
+      <div style={{
+        position: "absolute", bottom: 0, left: 0, right: 0, padding: "10px 12px",
+        transform: hovered ? "translateY(0)" : "translateY(2px)",
+        transition: "transform 0.3s ease",
+      }}>
+        <p style={{ margin: 0, fontSize: "11px", fontWeight: 600, color: "white", fontFamily: "sans-serif", lineHeight: 1.3 }}>
+          {item.title}
+        </p>
+        <p style={{
+          margin: "3px 0 0", fontSize: "9.5px", color: "rgba(255,255,255,0.68)",
+          fontFamily: "monospace", lineHeight: 1.45,
+          maxHeight: hovered ? "40px" : "0px", overflow: "hidden",
+          transition: "max-height 0.3s ease, opacity 0.3s ease",
+          opacity: hovered ? 1 : 0,
+        }}>
+          {item.description}
+        </p>
+      </div>
+
+      {/* Category badge */}
+      <div style={{
+        position: "absolute", top: "8px", right: "8px",
+        fontSize: "7.5px", fontFamily: "monospace", letterSpacing: "0.1em",
+        padding: "2px 7px", borderRadius: "100px",
+        background: `${accent}28`, color: accent,
+        border: `1px solid ${accent}50`,
+        backdropFilter: "blur(8px)",
+      }}>
+        {item.category}
+      </div>
+    </div>
+  )
+}
+
+function Lightbox({
+  item, totalCount, currentIdx, onClose, onPrev, onNext, accent,
+}: {
+  item: LifeItem; totalCount: number; currentIdx: number
+  onClose: () => void; onPrev: () => void; onNext: () => void; accent: string
+}) {
+  const [imgError, setImgError] = useState(false)
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    setImgError(false)
+    const t = setTimeout(() => setVisible(true), 16)
+    return () => clearTimeout(t)
+  }, [currentIdx])
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft")  { e.stopImmediatePropagation(); onPrev() }
+      if (e.key === "ArrowRight") { e.stopImmediatePropagation(); onNext() }
+    }
+    window.addEventListener("keydown", handleKey, true)
+    return () => window.removeEventListener("keydown", handleKey, true)
+  }, [onPrev, onNext])
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed", inset: 0, zIndex: 200,
+        background: "rgba(0,0,0,0.94)", backdropFilter: "blur(16px)",
+        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+        padding: "24px",
+        opacity: visible ? 1 : 0, transition: "opacity 0.25s ease",
+      }}
+    >
+      <div onClick={e => e.stopPropagation()} style={{ width: "100%", maxWidth: "540px" }}>
+
+        {/* Counter */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+          <span style={{ fontSize: "9px", fontFamily: "monospace", color: `${accent}99`, letterSpacing: "0.2em" }}>
+            {item.category.toUpperCase()}
+          </span>
+          <span style={{ fontSize: "9px", fontFamily: "monospace", color: "rgba(255,255,255,0.3)", letterSpacing: "0.1em" }}>
+            {currentIdx + 1} / {totalCount}
+          </span>
+        </div>
+
+        {/* Image */}
+        <div style={{
+          borderRadius: "16px", overflow: "hidden", position: "relative",
+          background: FALLBACK_GRADIENTS[item.category] ?? "#1f2937",
+          transform: visible ? "scale(1)" : "scale(0.96)",
+          transition: "transform 0.3s cubic-bezier(0.16,1,0.3,1)",
+        }}>
+          {!imgError && (
+            <img
+              src={item.src}
+              alt={item.title}
+              onError={() => setImgError(true)}
+              style={{ width: "100%", maxHeight: "52vh", objectFit: "cover", display: "block" }}
+            />
+          )}
+          {imgError && (
+            <div style={{ height: "240px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <span style={{ fontSize: "11px", fontFamily: "monospace", color: "rgba(255,255,255,0.3)" }}>
+                — photo coming soon —
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Info */}
+        <div style={{ marginTop: "18px" }}>
+          <h2 style={{ margin: "0 0 6px", fontSize: "20px", fontFamily: "sans-serif", fontWeight: 700, color: "white", letterSpacing: "-0.02em" }}>
+            {item.title}
+          </h2>
+          <p style={{ margin: 0, fontSize: "12px", color: "rgba(255,255,255,0.52)", fontFamily: "monospace", lineHeight: 1.65 }}>
+            {item.description}
+          </p>
+        </div>
+
+        {/* Navigation */}
+        <div style={{ display: "flex", gap: "10px", marginTop: "22px" }}>
+          {[
+            { label: "← prev", action: onPrev },
+            { label: "✕ close", action: onClose, primary: true },
+            { label: "next →", action: onNext },
+          ].map(({ label, action, primary }) => (
+            <button
+              key={label}
+              onClick={action}
+              style={{
+                flex: primary ? 2 : 1, padding: "10px 0", borderRadius: "10px", cursor: "pointer",
+                fontSize: "10px", fontFamily: "monospace", letterSpacing: "0.08em",
+                background: primary ? `${accent}18` : "rgba(255,255,255,0.05)",
+                color: primary ? accent : "rgba(255,255,255,0.45)",
+                border: `1px solid ${primary ? accent + "40" : "rgba(255,255,255,0.10)"}`,
+                transition: "background 0.15s, color 0.15s",
+              }}
+              onMouseEnter={e => {
+                const el = e.currentTarget as HTMLElement
+                el.style.background = primary ? `${accent}28` : "rgba(255,255,255,0.10)"
+                el.style.color      = primary ? accent : "rgba(255,255,255,0.75)"
+              }}
+              onMouseLeave={e => {
+                const el = e.currentTarget as HTMLElement
+                el.style.background = primary ? `${accent}18` : "rgba(255,255,255,0.05)"
+                el.style.color      = primary ? accent : "rgba(255,255,255,0.45)"
+              }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function LifeContent() {
+  const accent = SECTION_ACCENT.life.hex
+  const CATEGORIES = ["All", "Adventures", "Travel", "Sports", "Life"]
+
+  const [filter,   setFilter]   = useState("All")
+  const [lightbox, setLightbox] = useState<number | null>(null)
+
+  const filtered = filter === "All" ? LIFE_ITEMS : LIFE_ITEMS.filter(i => i.category === filter)
+
+  const openLightbox = (filteredIdx: number) => {
+    // store index into LIFE_ITEMS (not filtered array) so prev/next work on full list
+    const globalIdx = LIFE_ITEMS.indexOf(filtered[filteredIdx])
+    setLightbox(globalIdx)
+  }
+
+  return (
+    <>
+      <div className="flex flex-col gap-4">
+        <div>
+          <p className="text-xs font-mono tracking-[0.2em] uppercase mb-2" style={{ color: accent }}>Beyond Code</p>
+          <h2 className="text-2xl md:text-3xl font-sans font-bold text-white" style={{ letterSpacing: "-0.02em" }}>Life Outside Work</h2>
+        </div>
+        <div className="h-px" style={{ background: `linear-gradient(90deg, ${accent}40, transparent)` }} />
+
+        <p className="text-xs text-white/40 font-mono leading-relaxed">
+          There&apos;s more to me than code. Here&apos;s what keeps me grounded, curious, and human.
+        </p>
+
+        {/* Category filter tabs */}
+        <div className="flex gap-1.5 flex-wrap">
+          {CATEGORIES.map(cat => {
+            const active = filter === cat
+            return (
+              <button
+                key={cat}
+                onClick={() => setFilter(cat)}
+                style={{
+                  fontSize: "8.5px", fontFamily: "monospace", letterSpacing: "0.12em",
+                  padding: "4px 11px", borderRadius: "100px", cursor: "pointer",
+                  background: active ? `${accent}22` : "rgba(255,255,255,0.04)",
+                  color:      active ? accent : "rgba(255,255,255,0.35)",
+                  border:     `1px solid ${active ? accent + "50" : "rgba(255,255,255,0.09)"}`,
+                  transition: "all 0.15s ease",
+                }}
+                onMouseEnter={e => { if (!active) { const el = e.currentTarget as HTMLElement; el.style.color = "rgba(255,255,255,0.65)"; el.style.borderColor = "rgba(255,255,255,0.20)" } }}
+                onMouseLeave={e => { if (!active) { const el = e.currentTarget as HTMLElement; el.style.color = "rgba(255,255,255,0.35)"; el.style.borderColor = "rgba(255,255,255,0.09)" } }}
+              >
+                {cat}
+              </button>
+            )
+          })}
+        </div>
+
+        {/* Masonry grid — CSS columns for zero-JS masonry */}
+        <div style={{ columns: "2", gap: "8px" }}>
+          {filtered.map((item, i) => (
+            <div key={`${item.src}-${i}`} style={{ breakInside: "avoid", marginBottom: "8px" }}>
+              <ImageCard item={item} onClick={() => openLightbox(i)} accent={accent} />
+            </div>
+          ))}
+        </div>
+
+        {filtered.length === 0 && (
+          <p style={{ textAlign: "center", padding: "32px 0", fontSize: "10px", fontFamily: "monospace", color: "rgba(255,255,255,0.2)", letterSpacing: "0.15em" }}>
+            NOTHING HERE YET
+          </p>
+        )}
+      </div>
+
+      {/* Lightbox */}
+      {lightbox !== null && (
+        <Lightbox
+          item={LIFE_ITEMS[lightbox]}
+          totalCount={LIFE_ITEMS.length}
+          currentIdx={lightbox}
+          accent={accent}
+          onClose={() => setLightbox(null)}
+          onPrev={() => setLightbox((lightbox - 1 + LIFE_ITEMS.length) % LIFE_ITEMS.length)}
+          onNext={() => setLightbox((lightbox + 1) % LIFE_ITEMS.length)}
+        />
+      )}
+    </>
+  )
+}
+
 function ContactContent() {
   const accent = SECTION_ACCENT.contact.hex
   const links = [
@@ -723,6 +1076,7 @@ const CONTENT_MAP: Record<string, () => React.JSX.Element> = {
   experience: ExperienceContent,
   projects:   ProjectsContent,
   contact:    ContactContent,
+  life:       LifeContent,
 }
 
 /* ─── Main panel ─── */

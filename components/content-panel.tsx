@@ -1054,69 +1054,69 @@ function ProjectsContent() {
 
 /* ─── Life / Beyond Code ─── */
 interface LifeItem {
-  src: string
-  title: string
+  images:      string[]   // first image = gallery preview; all = carousel
+  title:       string
   description: string
-  category: string
-  tall?: boolean
+  category:    string
+  tall?:       boolean
 }
 
 const LIFE_ITEMS: LifeItem[] = [
   {
-    src: "/life/skiing.jpg",
-    title: "Skiing Whistler",
+    images:      ["/life/skiing.jpg", "/life/skiing-2.jpg", "/life/skiing-3.jpg"],
+    title:       "Skiing Whistler",
     description: "Weekend escapes to BC mountains — my favorite way to reset after a long semester.",
-    category: "Adventures",
-    tall: false,
+    category:    "Adventures",
+    tall:        false,
   },
   {
-    src: "/life/hiking.jpg",
-    title: "Garibaldi Lake",
+    images:      ["/life/hiking.jpg", "/life/hiking-2.jpg"],
+    title:       "Garibaldi Lake",
     description: "13km of pure BC alpine beauty. Worth every step and every sore leg the next day.",
-    category: "Adventures",
-    tall: true,
+    category:    "Adventures",
+    tall:        true,
   },
   {
-    src: "/life/japan.jpg",
-    title: "Tokyo, Japan",
+    images:      ["/life/japan.jpg", "/life/japan-2.jpg", "/life/japan-3.jpg"],
+    title:       "Tokyo, Japan",
     description: "Summer trip through Japan — the food, the trains, the vending machines. Unreal city.",
-    category: "Travel",
-    tall: true,
+    category:    "Travel",
+    tall:        true,
   },
   {
-    src: "/life/bball.jpg",
-    title: "Basketball",
+    images:      ["/life/bball.jpg"],
+    title:       "Basketball",
     description: "Weekly pickup runs at UBC. Nothing beats a good game with friends after a long week.",
-    category: "Sports",
-    tall: false,
+    category:    "Sports",
+    tall:        false,
   },
   {
-    src: "/life/hk.jpg",
-    title: "Hong Kong",
+    images:      ["/life/hk.jpg", "/life/hk-2.jpg"],
+    title:       "Hong Kong",
     description: "Grew up between here and Vancouver. Always feels like coming home.",
-    category: "Travel",
-    tall: false,
+    category:    "Travel",
+    tall:        false,
   },
   {
-    src: "/life/snowboard.jpg",
-    title: "Snowboarding",
+    images:      ["/life/snowboard.jpg", "/life/snowboard-2.jpg"],
+    title:       "Snowboarding",
     description: "Still learning but making progress. Cypress Mountain every chance I get.",
-    category: "Adventures",
-    tall: true,
+    category:    "Adventures",
+    tall:        true,
   },
   {
-    src: "/life/food.jpg",
-    title: "Ramen Research",
+    images:      ["/life/food.jpg", "/life/food-2.jpg", "/life/food-3.jpg"],
+    title:       "Ramen Research",
     description: "Methodically trying every ramen spot in Vancouver. It's serious work, really.",
-    category: "Life",
-    tall: false,
+    category:    "Life",
+    tall:        false,
   },
   {
-    src: "/life/sunset.jpg",
-    title: "UBC Sunsets",
+    images:      ["/life/sunset.jpg", "/life/sunset-2.jpg"],
+    title:       "UBC Sunsets",
     description: "The cliffs at UBC at golden hour. Hard to beat when you need to clear your head.",
-    category: "Life",
-    tall: false,
+    category:    "Life",
+    tall:        false,
   },
 ]
 
@@ -1127,10 +1127,12 @@ const FALLBACK_GRADIENTS: Record<string, string> = {
   Life:       "linear-gradient(135deg, #451a03 0%, #b45309 100%)",
 }
 
+/* ── Gallery card — shows first image as preview ── */
 function ImageCard({ item, onClick, accent }: { item: LifeItem; onClick: () => void; accent: string }) {
-  const [hovered, setHovered] = useState(false)
+  const [hovered,  setHovered]  = useState(false)
   const [imgError, setImgError] = useState(false)
-  const height = item.tall ? "188px" : "132px"
+  const height    = item.tall ? "188px" : "132px"
+  const hasMulti  = item.images.length > 1
 
   return (
     <div
@@ -1145,7 +1147,7 @@ function ImageCard({ item, onClick, accent }: { item: LifeItem; onClick: () => v
     >
       {!imgError && (
         <img
-          src={item.src}
+          src={item.images[0]}
           alt={item.title}
           onError={() => setImgError(true)}
           loading="lazy"
@@ -1187,7 +1189,7 @@ function ImageCard({ item, onClick, accent }: { item: LifeItem; onClick: () => v
 
       {/* Category badge */}
       <div style={{
-        position: "absolute", top: "8px", right: "8px",
+        position: "absolute", top: "8px", left: "8px",
         fontSize: "7.5px", fontFamily: "monospace", letterSpacing: "0.1em",
         padding: "2px 7px", borderRadius: "100px",
         background: `${accent}28`, color: accent,
@@ -1196,33 +1198,111 @@ function ImageCard({ item, onClick, accent }: { item: LifeItem; onClick: () => v
       }}>
         {item.category}
       </div>
+
+      {/* Multi-photo badge */}
+      {hasMulti && (
+        <div style={{
+          position: "absolute", top: "8px", right: "8px",
+          display: "flex", alignItems: "center", gap: "3px",
+          fontSize: "7.5px", fontFamily: "monospace", letterSpacing: "0.06em",
+          padding: "2px 7px", borderRadius: "100px",
+          background: "rgba(0,0,0,0.55)",
+          color: "rgba(255,255,255,0.75)",
+          border: "1px solid rgba(255,255,255,0.15)",
+          backdropFilter: "blur(8px)",
+        }}>
+          <span style={{ fontSize: "8px" }}>⬛</span>
+          {item.images.length}
+        </div>
+      )}
     </div>
   )
 }
 
-function Lightbox({
-  item, totalCount, currentIdx, onClose, onPrev, onNext, accent,
-}: {
-  item: LifeItem; totalCount: number; currentIdx: number
-  onClose: () => void; onPrev: () => void; onNext: () => void; accent: string
-}) {
-  const [imgError, setImgError] = useState(false)
-  const [visible, setVisible] = useState(false)
+/* ── Arrow button used inside the carousel ── */
+function CarouselArrow({ dir, onClick }: { dir: "left" | "right"; onClick: (e: React.MouseEvent) => void }) {
+  const [hov, setHov] = useState(false)
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        position: "absolute",
+        top: "50%", transform: "translateY(-50%)",
+        [dir === "left" ? "left" : "right"]: "10px",
+        zIndex: 10,
+        width: "34px", height: "34px", borderRadius: "50%",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        background:   hov ? "rgba(0,0,0,0.72)" : "rgba(0,0,0,0.42)",
+        border:       "1px solid rgba(255,255,255,0.18)",
+        color:        hov ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.55)",
+        fontSize:     "14px", cursor: "pointer",
+        transition:   "background 0.18s ease, color 0.18s ease",
+        backdropFilter: "blur(6px)",
+      }}
+    >
+      {dir === "left" ? "←" : "→"}
+    </button>
+  )
+}
 
+/* ── Carousel modal — multi-image lightbox per gallery item ── */
+function CarouselModal({
+  item, accent, onClose,
+}: {
+  item: LifeItem; accent: string; onClose: () => void
+}) {
+  const total                   = item.images.length
+  const [imgIdx, setImgIdx]     = useState(0)
+  const [imgOpacity, setOpacity] = useState(1)
+  const [animating, setAnimating] = useState(false)
+  const [visible, setVisible]   = useState(false)
+  const dragStart               = useRef<number | null>(null)
+
+  // Entrance fade
   useEffect(() => {
-    setImgError(false)
     const t = setTimeout(() => setVisible(true), 16)
     return () => clearTimeout(t)
-  }, [currentIdx])
+  }, [])
 
+  const goTo = useCallback((next: number) => {
+    if (animating || total <= 1) return
+    setAnimating(true)
+    setOpacity(0)
+    setTimeout(() => {
+      setImgIdx(next)
+      setOpacity(1)
+      setAnimating(false)
+    }, 200)
+  }, [animating, total])
+
+  const prev = useCallback(() => goTo((imgIdx - 1 + total) % total), [goTo, imgIdx, total])
+  const next = useCallback(() => goTo((imgIdx + 1) % total),         [goTo, imgIdx, total])
+
+  // Keyboard navigation
   useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft")  { e.stopImmediatePropagation(); onPrev() }
-      if (e.key === "ArrowRight") { e.stopImmediatePropagation(); onNext() }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft")  { e.stopImmediatePropagation(); prev() }
+      if (e.key === "ArrowRight") { e.stopImmediatePropagation(); next() }
     }
-    window.addEventListener("keydown", handleKey, true)
-    return () => window.removeEventListener("keydown", handleKey, true)
-  }, [onPrev, onNext])
+    window.addEventListener("keydown", onKey, true)
+    return () => window.removeEventListener("keydown", onKey, true)
+  }, [prev, next])
+
+  // Swipe / pointer drag
+  const onPointerDown = (e: React.PointerEvent) => { dragStart.current = e.clientX }
+  const onPointerUp   = (e: React.PointerEvent) => {
+    if (dragStart.current === null) return
+    const dx = e.clientX - dragStart.current
+    if (Math.abs(dx) > 40) { dx < 0 ? next() : prev() }
+    dragStart.current = null
+  }
+
+  const [errSet, setErrSet] = useState<Set<number>>(new Set())
+  const markError = (i: number) => setErrSet(s => new Set(s).add(i))
+  const imgSrc    = item.images[imgIdx]
+  const hasError  = errSet.has(imgIdx)
 
   return (
     <div
@@ -1235,43 +1315,105 @@ function Lightbox({
         opacity: visible ? 1 : 0, transition: "opacity 0.25s ease",
       }}
     >
-      <div onClick={e => e.stopPropagation()} style={{ width: "100%", maxWidth: "540px" }}>
+      <div onClick={e => e.stopPropagation()} style={{ width: "100%", maxWidth: "560px" }}>
 
-        {/* Counter */}
+        {/* Header: category label + image counter + close */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
           <span style={{ fontSize: "9px", fontFamily: "monospace", color: `${accent}99`, letterSpacing: "0.2em" }}>
             {item.category.toUpperCase()}
           </span>
-          <span style={{ fontSize: "9px", fontFamily: "monospace", color: "rgba(255,255,255,0.3)", letterSpacing: "0.1em" }}>
-            {currentIdx + 1} / {totalCount}
-          </span>
+          <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+            {total > 1 && (
+              <span style={{ fontSize: "9px", fontFamily: "monospace", color: "rgba(255,255,255,0.28)", letterSpacing: "0.1em" }}>
+                {imgIdx + 1} / {total}
+              </span>
+            )}
+            <button
+              onClick={onClose}
+              style={{
+                width: "26px", height: "26px", borderRadius: "8px", cursor: "pointer",
+                background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)",
+                color: "rgba(255,255,255,0.45)", fontSize: "14px",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                transition: "background 0.15s, color 0.15s",
+              }}
+              onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.background = "rgba(255,255,255,0.12)"; el.style.color = "rgba(255,255,255,0.9)" }}
+              onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.background = "rgba(255,255,255,0.06)"; el.style.color = "rgba(255,255,255,0.45)" }}
+            >✕</button>
+          </div>
         </div>
 
-        {/* Image */}
-        <div style={{
-          borderRadius: "16px", overflow: "hidden", position: "relative",
-          background: FALLBACK_GRADIENTS[item.category] ?? "#1f2937",
-          transform: visible ? "scale(1)" : "scale(0.96)",
-          transition: "transform 0.3s cubic-bezier(0.16,1,0.3,1)",
-        }}>
-          {!imgError && (
-            <img
-              src={item.src}
-              alt={item.title}
-              onError={() => setImgError(true)}
-              style={{ width: "100%", maxHeight: "52vh", objectFit: "cover", display: "block" }}
-            />
+        {/* Image frame + arrows */}
+        <div
+          onPointerDown={onPointerDown}
+          onPointerUp={onPointerUp}
+          style={{
+            position: "relative", borderRadius: "16px", overflow: "hidden",
+            background: FALLBACK_GRADIENTS[item.category] ?? "#1f2937",
+            transform: visible ? "scale(1)" : "scale(0.96)",
+            transition: "transform 0.3s cubic-bezier(0.16,1,0.3,1)",
+            userSelect: "none",
+          }}
+        >
+          {/* Preload adjacent images silently */}
+          {total > 1 && (
+            <>
+              <link rel="preload" as="image" href={item.images[(imgIdx + 1) % total]} />
+              <link rel="preload" as="image" href={item.images[(imgIdx - 1 + total) % total]} />
+            </>
           )}
-          {imgError && (
+
+          {!hasError ? (
+            <img
+              src={imgSrc}
+              alt={`${item.title} — ${imgIdx + 1}`}
+              onError={() => markError(imgIdx)}
+              draggable={false}
+              style={{
+                width: "100%", maxHeight: "52vh", objectFit: "cover", display: "block",
+                opacity: imgOpacity,
+                transition: "opacity 0.2s ease",
+              }}
+            />
+          ) : (
             <div style={{ height: "240px", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <span style={{ fontSize: "11px", fontFamily: "monospace", color: "rgba(255,255,255,0.3)" }}>
                 — photo coming soon —
               </span>
             </div>
           )}
+
+          {/* Overlay nav arrows — only when multi-image */}
+          {total > 1 && (
+            <>
+              <CarouselArrow dir="left"  onClick={e => { e.stopPropagation(); prev() }} />
+              <CarouselArrow dir="right" onClick={e => { e.stopPropagation(); next() }} />
+            </>
+          )}
         </div>
 
-        {/* Info */}
+        {/* Dot indicators — expandable pill for active */}
+        {total > 1 && (
+          <div style={{ display: "flex", justifyContent: "center", gap: "5px", marginTop: "14px" }}>
+            {item.images.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => goTo(i)}
+                style={{
+                  height: "5px",
+                  width:  i === imgIdx ? "18px" : "5px",
+                  borderRadius: "100px",
+                  background: i === imgIdx ? accent : "rgba(255,255,255,0.22)",
+                  boxShadow:  i === imgIdx ? `0 0 6px ${accent}` : "none",
+                  border: "none", cursor: "pointer", padding: 0,
+                  transition: "all 0.25s ease",
+                }}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Title + description */}
         <div style={{ marginTop: "18px" }}>
           <h2 style={{ margin: "0 0 6px", fontSize: "20px", fontFamily: "sans-serif", fontWeight: 700, color: "white", letterSpacing: "-0.02em" }}>
             {item.title}
@@ -1281,39 +1423,6 @@ function Lightbox({
           </p>
         </div>
 
-        {/* Navigation */}
-        <div style={{ display: "flex", gap: "10px", marginTop: "22px" }}>
-          {[
-            { label: "← prev", action: onPrev },
-            { label: "✕ close", action: onClose, primary: true },
-            { label: "next →", action: onNext },
-          ].map(({ label, action, primary }) => (
-            <button
-              key={label}
-              onClick={action}
-              style={{
-                flex: primary ? 2 : 1, padding: "10px 0", borderRadius: "10px", cursor: "pointer",
-                fontSize: "10px", fontFamily: "monospace", letterSpacing: "0.08em",
-                background: primary ? `${accent}18` : "rgba(255,255,255,0.05)",
-                color: primary ? accent : "rgba(255,255,255,0.45)",
-                border: `1px solid ${primary ? accent + "40" : "rgba(255,255,255,0.10)"}`,
-                transition: "background 0.15s, color 0.15s",
-              }}
-              onMouseEnter={e => {
-                const el = e.currentTarget as HTMLElement
-                el.style.background = primary ? `${accent}28` : "rgba(255,255,255,0.10)"
-                el.style.color      = primary ? accent : "rgba(255,255,255,0.75)"
-              }}
-              onMouseLeave={e => {
-                const el = e.currentTarget as HTMLElement
-                el.style.background = primary ? `${accent}18` : "rgba(255,255,255,0.05)"
-                el.style.color      = primary ? accent : "rgba(255,255,255,0.45)"
-              }}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
       </div>
     </div>
   )
@@ -1375,7 +1484,7 @@ function LifeContent() {
         {/* Masonry grid — CSS columns for zero-JS masonry */}
         <div style={{ columns: "2", gap: "8px" }}>
           {filtered.map((item, i) => (
-            <div key={`${item.src}-${i}`} style={{ breakInside: "avoid", marginBottom: "8px" }}>
+            <div key={`${item.images[0]}-${i}`} style={{ breakInside: "avoid", marginBottom: "8px" }}>
               <ImageCard item={item} onClick={() => openLightbox(i)} accent={accent} />
             </div>
           ))}
@@ -1390,14 +1499,10 @@ function LifeContent() {
 
       {/* Lightbox */}
       {lightbox !== null && (
-        <Lightbox
+        <CarouselModal
           item={LIFE_ITEMS[lightbox]}
-          totalCount={LIFE_ITEMS.length}
-          currentIdx={lightbox}
           accent={accent}
           onClose={() => setLightbox(null)}
-          onPrev={() => setLightbox((lightbox - 1 + LIFE_ITEMS.length) % LIFE_ITEMS.length)}
-          onNext={() => setLightbox((lightbox + 1) % LIFE_ITEMS.length)}
         />
       )}
     </>

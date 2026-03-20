@@ -6,6 +6,16 @@ import ContentPanel from "@/components/content-panel"
 
 const Scene = dynamic(() => import("@/components/scene"), { ssr: false })
 
+// Maps section id → RGB string for the cursor glow accent
+const SECTION_GLOW: Record<string, string> = {
+  about:      "139,92,246",
+  skills:     "34,211,238",
+  experience: "59,130,246",
+  projects:   "139,92,246",
+  contact:    "236,72,153",
+  life:       "245,158,11",
+}
+
 const NAV_ITEMS = [
   { id: "skills",     label: "Skills" },
   { id: "projects",   label: "Projects" },
@@ -38,6 +48,16 @@ export default function Home() {
     window.addEventListener("mousemove", move, { passive: true })
     return () => window.removeEventListener("mousemove", move)
   }, [])
+
+  // Shift cursor glow color to match the active section accent
+  useEffect(() => {
+    if (!cursorRef.current) return
+    const rgb = (activeNode && SECTION_GLOW[activeNode]) ?? "139,92,246"
+    cursorRef.current.style.background =
+      `radial-gradient(circle, rgba(${rgb},0.09) 0%, transparent 65%)`
+    cursorRef.current.style.transition =
+      "transform 0.12s ease-out, background 0.6s ease"
+  }, [activeNode])
 
   return (
     <main className="relative h-screen w-full overflow-hidden" style={{ background: "#050816" }}>

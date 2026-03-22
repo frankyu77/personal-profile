@@ -1063,58 +1063,86 @@ interface LifeItem {
 
 const LIFE_ITEMS: LifeItem[] = [
   {
-    images:      ["/life/skiing.jpg", "/life/skiing-2.jpg", "/life/skiing-3.jpg"],
-    title:       "Skiing Whistler",
-    description: "Weekend escapes to BC mountains — my favorite way to reset after a long semester.",
-    category:    "Adventures",
-    tall:        false,
-  },
-  {
-    images:      ["/life/hiking.jpg", "/life/hiking-2.jpg"],
-    title:       "Garibaldi Lake",
-    description: "13km of pure BC alpine beauty. Worth every step and every sore leg the next day.",
-    category:    "Adventures",
-    tall:        true,
-  },
-  {
-    images:      ["/life/japan.jpg", "/life/japan-2.jpg", "/life/japan-3.jpg"],
-    title:       "Tokyo, Japan",
-    description: "Summer trip through Japan — the food, the trains, the vending machines. Unreal city.",
+    images:      ["/life/japan1.jpg", "/life/japan2.jpg", "/life/japan3.jpg", "/life/japan4.jpg", "/life/japan5.jpg", "/life/japan6.jpg"],
+    title:       "Japan",
+    description: "Summer trip through Japan — temples, ramen, neon-lit streets, and more vending machines than I could count.",
     category:    "Travel",
     tall:        true,
   },
   {
-    images:      ["/life/bball.jpg"],
-    title:       "Basketball",
-    description: "Weekly pickup runs at UBC. Nothing beats a good game with friends after a long week.",
-    category:    "Sports",
-    tall:        false,
-  },
-  {
-    images:      ["/life/hk.jpg", "/life/hk-2.jpg"],
-    title:       "Hong Kong",
-    description: "Grew up between here and Vancouver. Always feels like coming home.",
-    category:    "Travel",
-    tall:        false,
-  },
-  {
-    images:      ["/life/snowboard.jpg", "/life/snowboard-2.jpg"],
-    title:       "Snowboarding",
-    description: "Still learning but making progress. Cypress Mountain every chance I get.",
+    images:      ["/life/panorama-ridge-hike1.jpg", "/life/panorama-ridge-hike2.jpg", "/life/panorama-ridge-hike3.jpg", "/life/panorama-ridge-hike4.jpg", "/life/panorama-ridge-hike5.JPG"],
+    title:       "Panorama Ridge",
+    description: "One of BC's most stunning hikes. 30km round trip with views that make every blister worth it.",
     category:    "Adventures",
     tall:        true,
   },
   {
-    images:      ["/life/food.jpg", "/life/food-2.jpg", "/life/food-3.jpg"],
-    title:       "Ramen Research",
-    description: "Methodically trying every ramen spot in Vancouver. It's serious work, really.",
+    images:      ["/life/tent-ridge1.jpg", "/life/tent-ridge2.jpg", "/life/tent-ridge3.jpg", "/life/tent-ridge4.jpg"],
+    title:       "Tent Ridge",
+    description: "A scramble through Kananaskis with a 360° ridge walk. One of my favourite days in the mountains.",
+    category:    "Adventures",
+    tall:        false,
+  },
+  {
+    images:      ["/life/vancouver-island1.jpg", "/life/vancouver-island2.jpg", "/life/vancouver-island3.jpg", "/life/vancouver-island4.jpg"],
+    title:       "Vancouver Island",
+    description: "Old-growth forests, wild coastlines, and small-town charm. A proper Pacific Northwest escape.",
+    category:    "Travel",
+    tall:        true,
+  },
+  {
+    images:      ["/life/sunrise-hike1.jpg", "/life/sunrise-hike2.jpg", "/life/sunrise-hike3.jpg", "/life/sunrise-hike4.jpg"],
+    title:       "Sunrise Hike",
+    description: "4am alarm, pitch-black trails, and a summit view that made it all make sense.",
+    category:    "Adventures",
+    tall:        false,
+  },
+  {
+    images:      ["/life/deep-cove1.jpg", "/life/deep-cove2.jpg", "/life/deep-cove3.jpg"],
+    title:       "Deep Cove",
+    description: "Kayaking through the inlet on a still morning. Vancouver's best-kept secret, sort of.",
+    category:    "Adventures",
+    tall:        false,
+  },
+  {
+    images:      ["/life/snowshoe1.jpg", "/life/snowshoe2.jpg", "/life/snowshoe3.jpg"],
+    title:       "Snowshoeing",
+    description: "Winter hikes through snowy BC backcountry. Slower than skiing, but somehow just as addictive.",
+    category:    "Adventures",
+    tall:        true,
+  },
+  {
+    images:      ["/life/toronto-1.jpg", "/life/toronto-2.jpg", "/life/toronto-3.jpg"],
+    title:       "Toronto",
+    description: "Exploring the other coast — CN Tower, Kensington Market, and a lot of very good food.",
+    category:    "Travel",
+    tall:        false,
+  },
+  {
+    images:      ["/life/malahat-skywalk1.jpg", "/life/malahat-skywalk2.jpg", "/life/malahat-skywalk3.jpg"],
+    title:       "Malahat Skywalk",
+    description: "Spiraling up through the treetops above the Saanich Inlet. Worth the drive from Victoria.",
+    category:    "Adventures",
+    tall:        false,
+  },
+  {
+    images:      ["/life/hiking-1.jpg", "/life/hiking-2.jpg"],
+    title:       "Alberta Trails",
+    description: "Weekend hikes through the Rockies. Always a new route to find.",
+    category:    "Adventures",
+    tall:        false,
+  },
+  {
+    images:      ["/life/ubc-sunset1.jpg", "/life/ubc-sunset2.jpg"],
+    title:       "UBC Sunsets",
+    description: "The cliffs at UBC at golden hour. Hard to beat when you need to clear your head.",
     category:    "Life",
     tall:        false,
   },
   {
-    images:      ["/life/sunset.jpg", "/life/sunset-2.jpg"],
-    title:       "UBC Sunsets",
-    description: "The cliffs at UBC at golden hour. Hard to beat when you need to clear your head.",
+    images:      ["/life/animal-1.jpg"],
+    title:       "Wildlife",
+    description: "Animal",
     category:    "Life",
     tall:        false,
   },
@@ -1123,7 +1151,6 @@ const LIFE_ITEMS: LifeItem[] = [
 const FALLBACK_GRADIENTS: Record<string, string> = {
   Adventures: "linear-gradient(135deg, #92400e 0%, #d97706 100%)",
   Travel:     "linear-gradient(135deg, #1e3a5f 0%, #3b82f6 100%)",
-  Sports:     "linear-gradient(135deg, #064e3b 0%, #10b981 100%)",
   Life:       "linear-gradient(135deg, #451a03 0%, #b45309 100%)",
 }
 
@@ -1430,7 +1457,7 @@ function CarouselModal({
 
 function LifeContent() {
   const accent = SECTION_ACCENT.life.hex
-  const CATEGORIES = ["All", "Adventures", "Travel", "Sports", "Life"]
+  const CATEGORIES = ["All", "Adventures", "Travel", "Life"]
 
   const [filter,   setFilter]   = useState("All")
   const [lightbox, setLightbox] = useState<number | null>(null)

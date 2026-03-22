@@ -318,10 +318,12 @@ function PlexusEdges({
   ambientNodes,
   sectionPhysics,
   hoveredNode,
+  activeNode,
 }: {
   ambientNodes: PhysicsNode[]
   sectionPhysics: PhysicsNode[]
   hoveredNode: string | null
+  activeNode: string | null
 }) {
   const MAX_EDGES = 4000
   const posArr  = useMemo(() => new Float32Array(MAX_EDGES * 6), [])
@@ -337,6 +339,12 @@ function PlexusEdges({
     if (hoveredNode) {
       const idx = SECTIONS.findIndex(s => s.id === hoveredNode)
       if (idx >= 0) hoverPos = sectionPhysics[idx].pos
+    }
+
+    let activePos: THREE.Vector3 | null = null
+    if (activeNode) {
+      const idx = SECTIONS.findIndex(s => s.id === activeNode)
+      if (idx >= 0) activePos = sectionPhysics[idx].pos
     }
 
     let ei = 0
@@ -359,6 +367,14 @@ function PlexusEdges({
             const mz = (allPos[i].z + allPos[j].z) / 2
             const dh = Math.sqrt((mx - hoverPos.x) ** 2 + (my - hoverPos.y) ** 2 + (mz - hoverPos.z) ** 2)
             if (dh < 1.6) boost = 1 + (1 - dh / 1.6) * 1.4
+          }
+
+          if (activePos) {
+            const mx = (allPos[i].x + allPos[j].x) / 2
+            const my = (allPos[i].y + allPos[j].y) / 2
+            const mz = (allPos[i].z + allPos[j].z) / 2
+            const dh = Math.sqrt((mx - activePos.x) ** 2 + (my - activePos.y) ** 2 + (mz - activePos.z) ** 2)
+            if (dh < 2.0) boost = Math.max(boost, 1 + (1 - dh / 2.0) * 2.4)
           }
 
           const alpha = Math.min(fade * 0.58 * boost * pulse, 1.0 / 0.75)
@@ -455,6 +471,96 @@ function DotCloud({ ambientNodes }: { ambientNodes: PhysicsNode[] }) {
       </bufferGeometry>
       <pointsMaterial size={0.065} color="#8b5cf6" transparent opacity={0.55} sizeAttenuation depthWrite={false} depthTest={false} />
     </points>
+  )
+}
+
+/* ─── Section-to-section connection graph ─── */
+
+// Conceptual adjacency: which sections are "related"
+const SECTION_EDGES: [number, number][] = [
+  [0, 1], // About ↔ Skills       (who I am → what I know)
+  [0, 2], // About ↔ Experience   (who I am → what I've done)
+  [1, 3], // Skills ↔ Projects    (what I know → what I built)
+  [2, 3], // Experience ↔ Projects (what I've done → what I built)
+  [2, 4], // Experience ↔ Contact  (work history → reach out)
+  [3, 5], // Projects ↔ Life      (what I built → who I am beyond code)
+  [4, 5], // Contact ↔ Life       (reach out → beyond code)
+]
+
+function SectionConnections({
+  sectionPhysics,
+  hoveredNode,
+  activeNode,
+}: {
+  sectionPhysics: PhysicsNode[]
+  hoveredNode: string | null
+  activeNode: string | null
+}) {
+  const N        = SECTION_EDGES.length
+  const posArr   = useMemo(() => new Float32Array(N * 6), [N])
+  const colArr   = useMemo(() => new Float32Array(N * 6), [N])
+  const geomRef  = useRef<THREE.BufferGeometry>(null)
+  const alphas   = useRef(new Float32Array(N).fill(0.06))
+
+  // Pre-parse section accent hex → [r, g, b] in 0–1 range
+  const sectionRGB = useMemo(() =>
+    SECTIONS.map(s => {
+      const h = s.accentHex.replace("#", "")
+      return [
+        parseInt(h.slice(0, 2), 16) / 255,
+        parseInt(h.slice(2, 4), 16) / 255,
+        parseInt(h.slice(4, 6), 16) / 255,
+      ] as [number, number, number]
+    }), [])
+
+  useFrame((state) => {
+    if (!geomRef.current) return
+    const t    = state.clock.getElapsedTime()
+    const hIdx = hoveredNode ? SECTIONS.findIndex(s => s.id === hoveredNode) : -1
+    const aIdx = activeNode  ? SECTIONS.findIndex(s => s.id === activeNode)  : -1
+
+    for (let ei = 0; ei < N; ei++) {
+      const [ai, bi] = SECTION_EDGES[ei]
+      const a = sectionPhysics[ai].pos
+      const b = sectionPhysics[bi].pos
+      const o = ei * 6
+
+      posArr[o]     = a.x; posArr[o + 1] = a.y; posArr[o + 2] = a.z
+      posArr[o + 3] = b.x; posArr[o + 4] = b.y; posArr[o + 5] = b.z
+
+      const aLit = ai === hIdx || ai === aIdx
+      const bLit = bi === hIdx || bi === aIdx
+      const tgt  = (aLit && bLit) ? 0.80 : (aLit || bLit) ? 0.50 : 0.06
+      alphas.current[ei] += (tgt - alphas.current[ei]) * 0.055
+
+      const pulse = 1 + Math.sin(t * 0.70 + ei * 0.85) * 0.10
+      const alpha = alphas.current[ei] * pulse
+
+      const ca = sectionRGB[ai]
+      const cb = sectionRGB[bi]
+      colArr[o]     = ca[0] * alpha; colArr[o + 1] = ca[1] * alpha; colArr[o + 2] = ca[2] * alpha
+      colArr[o + 3] = cb[0] * alpha; colArr[o + 4] = cb[1] * alpha; colArr[o + 5] = cb[2] * alpha
+    }
+
+    geomRef.current.attributes.position.needsUpdate = true
+    geomRef.current.attributes.color.needsUpdate    = true
+  })
+
+  return (
+    <lineSegments renderOrder={2}>
+      <bufferGeometry ref={geomRef}>
+        <bufferAttribute attach="attributes-position" args={[posArr, 3]} />
+        <bufferAttribute attach="attributes-color"    args={[colArr, 3]} />
+      </bufferGeometry>
+      <lineBasicMaterial
+        vertexColors
+        transparent
+        opacity={1}
+        depthWrite={false}
+        depthTest={false}
+        blending={THREE.AdditiveBlending}
+      />
+    </lineSegments>
   )
 }
 
@@ -807,7 +913,8 @@ export default function NeuralNetwork({ activeNode, onNodeClick }: { activeNode:
       <ParticleTrails ambientNodes={ambientNodes} />
       <SkillConstellation skillPhysics={skillsPhysics} isSkillHovered={hoveredNode === "skills"} anyNodeActive={activeNode !== null} />
 
-      <PlexusEdges ambientNodes={ambientNodes} sectionPhysics={sectionPhysics} hoveredNode={hoveredNode} />
+      <SectionConnections sectionPhysics={sectionPhysics} hoveredNode={hoveredNode} activeNode={activeNode} />
+      <PlexusEdges ambientNodes={ambientNodes} sectionPhysics={sectionPhysics} hoveredNode={hoveredNode} activeNode={activeNode} />
       <PlexusFaces ambientNodes={ambientNodes} sectionPhysics={sectionPhysics} />
       <DotCloud    ambientNodes={ambientNodes} />
 

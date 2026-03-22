@@ -8,7 +8,7 @@ const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono"
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-space" });
 
 export const metadata: Metadata = {
-  title: 'Alex Chen — Portfolio',
+  title: 'Frank Yu — Portfolio',
   description: 'Interactive 3D neural network personal portfolio',
   generator: 'v0.app',
   icons: {
